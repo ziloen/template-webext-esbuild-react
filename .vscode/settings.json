@@ -1,0 +1,20 @@
+{
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "css.customData": [
+    ".vscode/css-data.json"
+  ],
+  "editor.codeActionsOnSave": [
+    "source.sortImports",
+  ],
+  "eslint.experimental.useFlatConfig": true,
+  "eslint.format.enable": false,
+  "prettier.enable": false
+}

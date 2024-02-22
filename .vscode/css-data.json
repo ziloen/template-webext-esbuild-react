@@ -1,0 +1,28 @@
+{
+  "//": "https://github.com/microsoft/vscode-css-languageservice/blob/main/docs/customData.md",
+  "$schema": "https://raw.githubusercontent.com/microsoft/vscode-css-languageservice/master/docs/customData.schema.json",
+  "version": 1.1,
+  "atDirectives": [
+   
+    {
+      "name": "@tailwind",
+      "description": "tailwind directives",
+      "references": [
+        {
+          "name": "tailwind doc",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#tailwind"
+        }
+      ]
+    },
+    {
+      "name": "@unocss",
+      "description": "unocss directives",
+      "references": [
+        {
+          "name": "unocss doc",
+          "url": "https://unocss.dev/integrations/postcss#unocss"
+        }
+      ]
+    }
+  ]
+}
