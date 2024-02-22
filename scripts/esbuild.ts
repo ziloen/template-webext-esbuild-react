@@ -1,8 +1,9 @@
+import { execSync } from 'child_process'
 import type { BuildOptions, Plugin } from 'esbuild'
 import { build, context } from 'esbuild'
 import { copy as CopyPlugin } from 'esbuild-plugin-copy'
 import stylePlugin from 'esbuild-style-plugin'
-import { emptyDirSync, ensureDirSync } from 'fs-extra'
+import { emptyDirSync, ensureDirSync, watchFile } from 'fs-extra'
 import tailwindcss from 'tailwindcss'
 import AutoImport from 'unplugin-auto-import/esbuild'
 import { isDev, isFirefoxEnv, r } from './utils'
@@ -65,9 +66,19 @@ const options: BuildOptions = {
 
 ensureDirSync(outdir)
 emptyDirSync(outdir)
+writeManifest()
 
 if (isDev) {
   context(options).then(ctx => ctx.watch())
+
+  watchFile(r('src/manifest.ts'), () => {
+    writeManifest()
+  })
 } else {
   build(options)
+}
+
+function writeManifest() {
+  console.log('write manifest')
+  execSync('npx esno ./scripts/manifest.ts', { stdio: 'inherit' })
 }
