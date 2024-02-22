@@ -15,7 +15,7 @@ const options: BuildOptions = {
   entryPoints: [
     r('src/background/main.ts'),
     r('src/devtools/main.ts'),
-    r('src/pages/devtools-panel/main.ts'),
+    r('src/pages/devtools-panel/main.tsx'),
     r('src/pages/options/main.ts'),
   ],
   legalComments: 'eof',
@@ -46,7 +46,6 @@ const options: BuildOptions = {
     }) as Plugin,
 
     CopyPlugin({
-      once: true,
       resolveFrom: 'cwd',
       assets: [
         { from: 'public/**/*', to: 'dist/dev' },
