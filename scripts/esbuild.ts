@@ -1,9 +1,9 @@
-import { execSync } from 'child_process'
 import type { BuildOptions, Plugin } from 'esbuild'
 import { build, context } from 'esbuild'
 import { copy as CopyPlugin } from 'esbuild-plugin-copy'
 import stylePlugin from 'esbuild-style-plugin'
 import { emptyDirSync, ensureDirSync, watchFile } from 'fs-extra'
+import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
 import AutoImport from 'unplugin-auto-import/esbuild'
 import { isDev, isFirefoxEnv, r } from './utils'
@@ -22,7 +22,10 @@ const options: BuildOptions = {
   supported: {
     nesting: false,
   },
+  jsx: 'automatic',
+  jsxDev: isDev,
   splitting: true,
+  target: ['chrome100', 'es2022', 'firefox115'],
   format: 'esm',
   platform: 'browser',
   chunkNames: 'chunks/[name]-[hash]',
@@ -31,6 +34,9 @@ const options: BuildOptions = {
   assetNames: 'assets/[name]-[hash]',
   outbase: 'src',
   outdir: outdir,
+  loader: {
+    '.woff2': 'file',
+  },
   plugins: [
     AutoImport({
       include: [
@@ -57,7 +63,10 @@ const options: BuildOptions = {
 
     stylePlugin({
       postcss: {
-        plugins: [tailwindcss as any],
+        plugins: [
+          // @ts-expect-error tailwindcss issue
+          tailwindcss,
+        ],
       },
     }),
   ],
