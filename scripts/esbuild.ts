@@ -39,6 +39,7 @@ const options: BuildOptions = {
   outdir: outdir,
   define: {},
   loader: {
+    '.woff': 'file',
     '.woff2': 'file',
   },
   plugins: [
