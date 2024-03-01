@@ -1,5 +1,6 @@
 import { pluginCreator } from '@ziloen/tailwind-config'
 import type { Config } from 'tailwindcss'
+import { } from 'tailwindcss/defaultConfig'
 
 export default {
   content: ['./src/**/*.{ts,tsx,html}'],
@@ -26,7 +27,30 @@ export default {
       max: '2147483647',
     },
 
-    extend: {},
+    extend: {
+      fontFamily: {
+        mono: [
+          '"Fira Code Variable"',
+          'ui-monospace',
+          '"Cascadia Code"',
+          '"Source Code Pro"',
+          'Menlo',
+          'Consolas',
+          '"DejaVu Sans Mono"',
+          'monospace',
+        ],
+        sans: [
+          '"Noto Sans SC Variable"',
+          'ui-sans-serif',
+          'system-ui',
+          'sans-serif',
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"',
+          '"Noto Color Emoji"',
+        ],
+      },
+    },
   },
   experimental: {
     // Remove unused global css variables, e.g. --tw-translate-x: 0;
