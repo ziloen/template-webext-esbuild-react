@@ -5,9 +5,12 @@ import stylePlugin from 'esbuild-style-plugin'
 import { emptyDirSync, ensureDirSync, watchFile } from 'fs-extra'
 import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
+import resolveConfig from 'tailwindcss/resolveConfig'
 import AutoImport from 'unplugin-auto-import/esbuild'
+import tailwindConfig from '../tailwind.config'
 import { isDev, isFirefoxEnv, r } from './utils'
 
+const fullConfig = resolveConfig(tailwindConfig)
 const cwd = process.cwd()
 const outdir = r('dist/dev')
 
@@ -34,6 +37,7 @@ const options: BuildOptions = {
   assetNames: 'assets/[name]-[hash]',
   outbase: 'src',
   outdir: outdir,
+  define: {},
   loader: {
     '.woff2': 'file',
   },
@@ -65,7 +69,7 @@ const options: BuildOptions = {
       postcss: {
         plugins: [
           // @ts-expect-error tailwindcss issue
-          tailwindcss,
+          tailwindcss(fullConfig),
         ],
       },
     }),
