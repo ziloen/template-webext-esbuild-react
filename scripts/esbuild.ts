@@ -41,6 +41,11 @@ const options: BuildOptions = {
     'chrome-extension://__MSG_@@extension_id__/*',
     'moz-extension://__MSG_@@extension_id__/*',
   ],
+  alias: {
+    '@@ext': isFirefoxEnv
+      ? 'moz-extension://__MSG_@@extension_id__'
+      : 'chrome-extension://__MSG_@@extension_id__',
+  },
   outbase: 'src',
   outdir: outdir,
   define: {},
