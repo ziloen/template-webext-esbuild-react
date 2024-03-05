@@ -20,9 +20,11 @@ type MV3 = Omit<Manifest.WebExtensionManifest, MV2Keys> & ChromiumManifest
 
 export function getManifest() {
   const manifest: MV3 = {
+    version: '0.0.0.1',
     manifest_version: 3,
     name: 'Template WebExt Esbuild React',
-    version: '0.0.0.1',
+    description: '__MSG_extensionDescription__',
+    default_locale: 'en',
     background: isFirefoxEnv
       ? { scripts: ['./background/mian.js'], type: 'module' }
       : { service_worker: './background/main.js', type: 'module' },
