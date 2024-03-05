@@ -42,7 +42,7 @@ const options: BuildOptions = {
     'moz-extension://__MSG_@@extension_id__/*',
   ],
   alias: {
-    '@@ext': isFirefoxEnv
+    '~ext-root': isFirefoxEnv
       ? 'moz-extension://__MSG_@@extension_id__'
       : 'chrome-extension://__MSG_@@extension_id__',
   },
