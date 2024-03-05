@@ -1,129 +1,10 @@
-import { pluginCreator } from '@ziloen/tailwind-config'
+import { preset } from '@ziloen/tailwind-config'
 import type { Config } from 'tailwindcss'
 
 export default {
   content: ['./src/**/*.{ts,tsx,html}'],
+  presets: [preset],
   theme: {
-    colors: {
-      // Default colors
-      inherit: 'inherit',
-      current: 'currentColor',
-      transparent: 'transparent',
-      black: '#000',
-      white: '#fff',
-
-      // Custom colors
-      green: {
-        '50': '#e3fff3',
-        '100': '#D0FFED',
-        '200': '#B3FFE3',
-        '300': '#88FFD1',
-        '400': '#53FEBE',
-        '500': '#3fe1b0',
-        '600': '#2BC4A2',
-        '700': '#068989',
-        '800': '#005E5D',
-        '900': '#083F37',
-      },
-      blue: {
-        '50': '#ACF1FF',
-        '100': '#80EAFF',
-        '200': '#00DDFF',
-        '300': '#00B3F5',
-        '400': '#0290EE',
-        '500': '#0060E0',
-        '600': '#0250BC',
-        '700': '#063F96',
-        '800': '#073072',
-        '900': '#0A214D',
-      },
-      violet: {
-        '50': '#E6DFFF',
-        '100': '#D9BFFF',
-        '200': '#CC9EFF',
-        '300': '#C588FF',
-        '400': '#AC71FF',
-        '500': '#9059FF',
-        '600': '#7543E3',
-        '700': '#582ACB',
-        '800': '#46278E',
-        '900': '#321C64',
-      },
-      purple: {
-        '50': '#f7e3ff',
-        '100': '#F6B9FF',
-        '200': '#F690FF',
-        '300': '#F564FF',
-        '400': '#D64CF1',
-        '500': '#B933E1',
-        '600': '#962BB9',
-        '700': '#712290',
-        '800': '#4D1A69',
-        '900': '#2B1141',
-      },
-      pink: {
-        '50': '#FFDFF0',
-        '100': '#FFB4DB',
-        '200': '#FF8AC6',
-        '300': '#FF6BBB',
-        '400': '#FE4AA3',
-        '500': '#FF2A8A',
-        '600': '#E11586',
-        '700': '#C60184',
-        '800': '#7F165B',
-        '900': '#50134C',
-      },
-      red: {
-        '50': '#FFE0E8',
-        '100': '#FFBEC6',
-        '200': '#FF9AA2',
-        '300': '#FF848C',
-        '400': '#FF6A75',
-        '500': '#FF505F',
-        '600': '#E02950',
-        '700': '#C50143',
-        '800': '#800220',
-        '900': '#440307',
-      },
-      orange: {
-        '50': '#FFF4DE',
-        '100': '#FFD6B2',
-        '200': '#FFB588',
-        '300': '#FEA365',
-        '400': '#FE8A4F',
-        '500': '#FF7139',
-        '600': '#E25821',
-        '700': '#CD3D00',
-        '800': '#9D280C',
-        '900': '#7B1604',
-      },
-      yellow: {
-        '50': '#FFFFCD',
-        '100': '#FEFF95',
-        '200': '#FFEA7F',
-        '300': '#FFD567',
-        '400': '#FFBD4F',
-        '500': '#FFA537',
-        '600': '#E17F2E',
-        '700': '#C45A28',
-        '800': '#A7341F',
-        '900': '#960F18',
-      },
-    },
-
-    lineHeight: {
-      none: '1',
-    },
-
-    zIndex: {
-      auto: 'auto',
-      0: '0',
-      1: '1',
-      2: '2',
-      3: '3',
-      max: '2147483647',
-    },
-
     extend: {
       fontFamily: {
         mono: [
@@ -149,13 +30,4 @@ export default {
       },
     },
   },
-  experimental: {
-    // Remove unused global css variables, e.g. --tw-translate-x: 0;
-    optimizeUniversalDefaults: true,
-    // matchVariant: true,
-  },
-  // https://tailwindcss.com/docs/theme#configuration-reference
-  // https://github.com/tailwindlabs/tailwindcss/blob/master/src/corePlugins.js
-  corePlugins: {},
-  plugins: [pluginCreator],
 } satisfies Config
