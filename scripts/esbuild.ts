@@ -35,6 +35,12 @@ const options: BuildOptions = {
   treeShaking: true,
   bundle: true,
   assetNames: 'assets/[name]-[hash]',
+  // https://developer.chrome.com/docs/extensions/reference/api/i18n#overview-predefined
+  // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization#predefined_messages
+  external: [
+    'chrome-extension://__MSG_@@extension_id__/*',
+    'moz-extension://__MSG_@@extension_id__/*',
+  ],
   outbase: 'src',
   outdir: outdir,
   define: {},
