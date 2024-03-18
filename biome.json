@@ -14,9 +14,7 @@
       "**/*.js",
       "**/*.jsx"
     ],
-    "ignore": [
-      "**/auto-imports.d.ts"
-    ]
+    "ignore": []
   },
   "javascript": {
     "formatter": {

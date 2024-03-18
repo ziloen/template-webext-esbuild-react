@@ -20,7 +20,9 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
   'react-dom': ['createPortal'],
   'webextension-polyfill': [
     ['runtime', 'getURL'],
+    ['runtime', 'getManifest'],
     ['default', 'runtime', 'getURL'],
+    ['default', 'runtime', 'getManifest'],
   ],
 }
 
@@ -75,12 +77,6 @@ export function pureAnnotations(): Plugin {
  * 5. import { object as alias } from "module"; alias.path.to.method()
  */
 function isPureCall(path: NodePath<CallExpression>): boolean {
-  const importIdentifierPath = getImportIdentifierPath(path)
-
-  return importIdentifierPath !== null
-}
-
-function getImportIdentifierPath(path: NodePath<CallExpression>) {
   const calleePath = path.get('callee')
 
   if (calleePath.isIdentifier()) {
@@ -89,11 +85,11 @@ function getImportIdentifierPath(path: NodePath<CallExpression>) {
         methods.includes(calleePath.node.name) &&
         calleePath.referencesImport(module, calleePath.node.name)
       ) {
-        return calleePath
+        return true
       }
     }
 
-    return null
+    return false
   }
 
   const allProperties: NodePath<Identifier>[] = []
@@ -106,7 +102,7 @@ function getImportIdentifierPath(path: NodePath<CallExpression>) {
       const nextObjPath = objPath.get('object')
 
       if (!propPath.isIdentifier()) {
-        return null
+        return false
       }
 
       if (nextObjPath.isIdentifier()) {
@@ -121,11 +117,11 @@ function getImportIdentifierPath(path: NodePath<CallExpression>) {
         continue
       }
 
-      return null
+      return false
     }
   }
 
-  if (allProperties.length === 0) return null
+  if (allProperties.length === 0) return false
 
   for (const [module, methods] of Object.entries(PURE_CALLS)) {
     for (const method of methods) {
@@ -153,18 +149,18 @@ function getImportIdentifierPath(path: NodePath<CallExpression>) {
         if (parent.node.source.value !== module) continue
 
         if (path.isImportDefaultSpecifier() && firstMethod === 'default') {
-          return firstProp
+          return true
         }
 
         if (path.isImportNamespaceSpecifier() && firstMethod === '*') {
-          return firstProp
+          return true
         }
 
         if (
           path.isImportSpecifier() &&
           isIdentifier(path.node.imported, { name: firstMethod })
         ) {
-          return firstProp
+          return true
         }
 
         continue
@@ -172,7 +168,7 @@ function getImportIdentifierPath(path: NodePath<CallExpression>) {
     }
   }
 
-  return null
+  return false
 }
 
 function annotateAsPure(pathOrNode: Node | NodePath): void {

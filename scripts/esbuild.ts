@@ -1,4 +1,4 @@
-import type { BuildOptions, Plugin } from 'esbuild'
+import type { BuildOptions } from 'esbuild'
 import { build, context } from 'esbuild'
 import { copy as CopyPlugin } from 'esbuild-plugin-copy'
 import stylePlugin from 'esbuild-style-plugin'
@@ -57,7 +57,7 @@ const options: BuildOptions = {
     '.woff2': 'file',
   },
   plugins: [
-    ...(isDev ? [pureAnnotations()] : [pureAnnotations()]),
+    ...(isDev ? [] : [pureAnnotations()]),
 
     CopyPlugin({
       resolveFrom: 'cwd',
@@ -68,8 +68,6 @@ const options: BuildOptions = {
       ],
       watch: isDev,
     }),
-
-
 
     stylePlugin({
       postcss: {
