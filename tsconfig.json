@@ -3,6 +3,7 @@
     "baseUrl": "./",
     "allowJs": false,
     "esModuleInterop": true,
+    "target": "ESNext",
     "strict": true,
     "alwaysStrict": true,
     "exactOptionalPropertyTypes": true,

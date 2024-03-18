@@ -2,12 +2,12 @@ import type { BuildOptions, Plugin } from 'esbuild'
 import { build, context } from 'esbuild'
 import { copy as CopyPlugin } from 'esbuild-plugin-copy'
 import stylePlugin from 'esbuild-style-plugin'
-import { emptyDirSync, ensureDirSync, watchFile } from 'fs-extra'
+import fs from 'fs-extra'
 import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
 import resolveConfig from 'tailwindcss/resolveConfig'
-import AutoImport from 'unplugin-auto-import/esbuild'
 import tailwindConfig from '../tailwind.config'
+import { pureAnnotations } from './plugins/pure-annotations'
 import { isDev, isFirefoxEnv, r } from './utils'
 
 const fullConfig = resolveConfig(tailwindConfig)
@@ -25,6 +25,8 @@ const options: BuildOptions = {
   supported: {
     nesting: false,
   },
+  minify: !isDev,
+  drop: isDev ? [] : ['console', 'debugger'],
   jsx: 'automatic',
   jsxDev: isDev,
   splitting: true,
@@ -34,6 +36,7 @@ const options: BuildOptions = {
   chunkNames: 'chunks/[name]-[hash]',
   treeShaking: true,
   bundle: true,
+  jsxSideEffects: false,
   assetNames: 'assets/[name]-[hash]',
   // https://developer.chrome.com/docs/extensions/reference/api/i18n#overview-predefined
   // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization#predefined_messages
@@ -54,18 +57,7 @@ const options: BuildOptions = {
     '.woff2': 'file',
   },
   plugins: [
-    AutoImport({
-      include: [
-        /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-      ],
-      imports: [
-        {
-          'webextension-polyfill': [['*', 'browser']],
-          ulid: ['ulid'],
-        },
-      ],
-      dts: r('src/types/auto-imports.d.ts'),
-    }) as Plugin,
+    ...(isDev ? [] : [pureAnnotations()]),
 
     CopyPlugin({
       resolveFrom: 'cwd',
@@ -88,14 +80,14 @@ const options: BuildOptions = {
   ],
 }
 
-ensureDirSync(outdir)
-emptyDirSync(outdir)
+fs.ensureDirSync(outdir)
+fs.emptyDirSync(outdir)
 writeManifest()
 
 if (isDev) {
   context(options).then(ctx => ctx.watch())
 
-  watchFile(r('src/manifest.ts'), () => {
+  fs.watchFile(r('src/manifest.ts'), () => {
     writeManifest()
   })
 } else {

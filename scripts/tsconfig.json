@@ -2,9 +2,15 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "target": "ESNext",
     "noEmit": true,
     "types": [
       "node"
+    ],
+    "lib": [
+      "ESNext"
     ],
     "paths": {}
   },
