@@ -1,7 +1,9 @@
-import type { NodePath } from '@babel/core'
+import type { NodePath, TransformOptions } from '@babel/core'
+import { transform } from '@babel/core'
 import type { CallExpression, Identifier, Node } from '@babel/types'
 import { addComment, isIdentifier } from '@babel/types'
-import babelPlugin from '@chialab/esbuild-plugin-babel'
+import type { Plugin } from 'esbuild'
+import fs from 'fs-extra'
 
 const PURE_CALLS: Record<string, (string | string[])[]> = {
   react: [
@@ -22,8 +24,11 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
   ],
 }
 
-export function pureAnnotations() {
-  return babelPlugin({
+export function pureAnnotations(): Plugin {
+  const config: TransformOptions = {
+    parserOpts: {
+      plugins: ['jsx', 'typescript'],
+    },
     plugins: [
       {
         name: 'pure-annotations',
@@ -36,7 +41,29 @@ export function pureAnnotations() {
         },
       },
     ],
-  })
+  }
+
+  function transformContents(code: string) {
+    return new Promise<string>((resolve, reject) => {
+      transform(code, config, (err, result) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(result!.code!)
+        }
+      })
+    })
+  }
+
+  return {
+    name: 'pure-annotations',
+    setup(build) {
+      build.onLoad({ filter: /\.tsx?$/ }, async args => {
+        const code = await fs.readFile(args.path, 'utf-8')
+        return { contents: await transformContents(code), loader: 'tsx' }
+      })
+    },
+  }
 }
 
 /**

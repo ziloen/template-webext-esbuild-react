@@ -19,7 +19,7 @@ const options: BuildOptions = {
     r('src/background/main.ts'),
     r('src/devtools/main.ts'),
     r('src/pages/devtools-panel/main.tsx'),
-    r('src/pages/options/main.ts'),
+    r('src/pages/options/main.tsx'),
   ],
   legalComments: 'eof',
   supported: {
@@ -57,7 +57,7 @@ const options: BuildOptions = {
     '.woff2': 'file',
   },
   plugins: [
-    ...(isDev ? [] : [pureAnnotations()]),
+    ...(isDev ? [pureAnnotations()] : [pureAnnotations()]),
 
     CopyPlugin({
       resolveFrom: 'cwd',
@@ -68,6 +68,8 @@ const options: BuildOptions = {
       ],
       watch: isDev,
     }),
+
+
 
     stylePlugin({
       postcss: {
