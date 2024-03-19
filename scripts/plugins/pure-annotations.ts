@@ -14,8 +14,8 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
     'createRef',
     'forwardRef',
     'isValidElement',
-    'memo',
     'lazy',
+    'memo',
   ],
   'react-dom': ['createPortal'],
   'webextension-polyfill': [
@@ -23,6 +23,18 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
     ['runtime', 'getManifest'],
     ['default', 'runtime', 'getURL'],
     ['default', 'runtime', 'getManifest'],
+  ],
+  'lodash-es': [
+    'clone',
+    'debounce',
+    'isEmpty',
+    'isEqual',
+    'isFunction',
+    'isPlainObject',
+    'memoize',
+    'mergeWith',
+    'noop',
+    'throttle',
   ],
 }
 
