@@ -36,7 +36,6 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
     'isFunction',
     'isPlainObject',
     'memoize',
-    'mergeWith',
     'noop',
     'throttle',
   ],
@@ -47,6 +46,9 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
   'clsx/lite': ['default', 'clsx'],
 }
 
+/**
+ * This plugin is used to mark some function calls as pure, so that they can be removed by the minifier.
+ */
 export function pureAnnotations(): Plugin {
   const config: TransformOptions = {
     parserOpts: {
@@ -154,6 +156,7 @@ function isPureCall(path: NodePath<CallExpression>): boolean {
       if (
         method.every((method, index) => {
           // Skip the first property, it could be an alias or a default import
+          // it will be checked later in isReferencesImport
           if (index === 0) return true
           return allProperties[index]?.node.name === method
         })
@@ -175,6 +178,9 @@ function isPureCall(path: NodePath<CallExpression>): boolean {
   return false
 }
 
+/**
+ * https://github.com/babel/babel/blob/main/packages/babel-traverse/src/path/introspection.ts#L191
+ */
 function isReferencesImport(
   nodePath: NodePath<Identifier>,
   moduleSource: string,
