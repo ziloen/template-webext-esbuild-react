@@ -19,10 +19,14 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
   ],
   'react-dom': ['createPortal'],
   'webextension-polyfill': [
-    ['runtime', 'getURL'],
+    ['tabs', 'query'],
+    ['i18n', 'detectLanguage'],
     ['runtime', 'getManifest'],
-    ['default', 'runtime', 'getURL'],
+    ['runtime', 'getURL'],
+    ['default', 'tabs', 'query'],
+    ['default', 'i18n', 'detectLanguage'],
     ['default', 'runtime', 'getManifest'],
+    ['default', 'runtime', 'getURL'],
   ],
   'lodash-es': [
     'clone',
@@ -36,6 +40,11 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
     'noop',
     'throttle',
   ],
+  rxjs: ['fromEventPattern', 'share'],
+  'rxjs/operators': ['share'],
+  'serialize-error': ['deserializeError', 'serializeError'],
+  clsx: ['default', 'clsx'],
+  'clsx/lite': ['default', 'clsx'],
 }
 
 export function pureAnnotations(): Plugin {
@@ -94,8 +103,11 @@ function isPureCall(path: NodePath<CallExpression>): boolean {
   if (calleePath.isIdentifier()) {
     for (const [module, methods] of Object.entries(PURE_CALLS)) {
       if (
-        methods.includes(calleePath.node.name) &&
-        calleePath.referencesImport(module, calleePath.node.name)
+        isReferencesImport(
+          calleePath,
+          module,
+          methods.filter((m): m is string => typeof m === 'string')
+        )
       ) {
         return true
       }
@@ -141,6 +153,7 @@ function isPureCall(path: NodePath<CallExpression>): boolean {
 
       if (
         method.every((method, index) => {
+          // Skip the first property, it could be an alias or a default import
           if (index === 0) return true
           return allProperties[index]?.node.name === method
         })
@@ -150,33 +163,41 @@ function isPureCall(path: NodePath<CallExpression>): boolean {
         const firstMethod = method[0]
         if (!firstMethod) continue
 
-        const binding = firstProp.scope.getBinding(firstProp.node.name)
-        if (!binding || binding.kind !== 'module') continue
-
-        const path = binding.path
-        const parent = path.parentPath
-
-        if (!parent || !parent.isImportDeclaration()) continue
-
-        if (parent.node.source.value !== module) continue
-
-        if (path.isImportDefaultSpecifier() && firstMethod === 'default') {
+        if (isReferencesImport(firstProp, module, firstMethod)) {
           return true
+        } else {
+          continue
         }
-
-        if (path.isImportNamespaceSpecifier() && firstMethod === '*') {
-          return true
-        }
-
-        if (
-          path.isImportSpecifier() &&
-          isIdentifier(path.node.imported, { name: firstMethod })
-        ) {
-          return true
-        }
-
-        continue
       }
+    }
+  }
+
+  return false
+}
+
+function isReferencesImport(
+  nodePath: NodePath<Identifier>,
+  moduleSource: string,
+  importedName: string | string[]
+) {
+  const binding = nodePath.scope.getBinding(nodePath.node.name)
+  if (!binding || binding.kind !== 'module') return false
+
+  const parent = binding.path.parentPath
+  if (!parent || !parent.isImportDeclaration()) return false
+  if (parent.node.source.value !== moduleSource) return false
+
+  const path = binding.path
+
+  if (path.isImportDefaultSpecifier() && importedName === 'default') return true
+
+  if (path.isImportNamespaceSpecifier() && importedName === '*') return true
+
+  if (path.isImportSpecifier()) {
+    for (const name of Array.isArray(importedName)
+      ? importedName
+      : [importedName]) {
+      if (isIdentifier(path.node.imported, { name })) return true
     }
   }
 
