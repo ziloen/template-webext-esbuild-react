@@ -5,6 +5,8 @@ import { addComment, isIdentifier } from '@babel/types'
 import type { Plugin } from 'esbuild'
 import fs from 'fs-extra'
 
+// https://github.com/babel/babel/blob/main/packages/babel-plugin-transform-react-pure-annotations/src/index.ts
+
 const PURE_CALLS: Record<string, (string | string[])[]> = {
   react: [
     'cloneElement',
@@ -85,7 +87,10 @@ export function pureAnnotations(): Plugin {
     setup(build) {
       build.onLoad({ filter: /\.tsx?$/ }, async args => {
         const code = await fs.readFile(args.path, 'utf-8')
-        return { contents: await transformContents(code), loader: 'tsx' }
+        return {
+          contents: await transformContents(code),
+          loader: args.path.endsWith('x') ? 'tsx' : 'ts',
+        }
       })
     },
   }
