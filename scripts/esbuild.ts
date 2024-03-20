@@ -7,7 +7,7 @@ import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../tailwind.config'
-import { pureAnnotations } from './plugins/pure-annotations'
+import { esbuildBabel } from './plugins/babel'
 import { isDev, isFirefoxEnv, r } from './utils'
 
 const fullConfig = resolveConfig(tailwindConfig)
@@ -57,7 +57,7 @@ const options: BuildOptions = {
     '.woff2': 'file',
   },
   plugins: [
-    ...(isDev ? [] : [pureAnnotations()]),
+    ...(isDev ? [] : [esbuildBabel()]),
 
     CopyPlugin({
       resolveFrom: 'cwd',
