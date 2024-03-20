@@ -56,6 +56,16 @@ const options: BuildOptions = {
     '.woff': 'file',
     '.woff2': 'file',
   },
+  pure: [
+    'Math.random',
+    'Math.floor',
+    'Math.ceil',
+    'Math.round',
+    'Math.abs',
+    'Math.min',
+    'Math.max',
+    'Math.pow',
+  ],
   plugins: [
     ...(isDev ? [] : [esbuildBabel()]),
 
