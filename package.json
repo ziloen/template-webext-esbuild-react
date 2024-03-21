@@ -20,7 +20,7 @@
     "@types/webextension-polyfill": "0.10.7",
     "@ziloen/eslint-config": "0.1.21",
     "@ziloen/tailwind-config": "1.1.2",
-    "babel-plugin-annotate-module-pure": "1.0.0",
+    "babel-plugin-annotate-module-pure": "1.0.1",
     "cross-env": "7.0.3",
     "esbuild": "0.20.2",
     "esbuild-plugin-copy": "2.1.1",
