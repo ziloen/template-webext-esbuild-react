@@ -63,6 +63,8 @@ const sharedOptions = {
     'Math.max',
     'Math.pow',
   ],
+  logLevel: 'info',
+  color: true,
   plugins: [
     ...(isDev ? [] : [esbuildBabel()]),
 
