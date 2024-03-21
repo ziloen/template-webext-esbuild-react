@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "allowJs": false,
+    // src/manifest.ts need this
+    // https://github.com/microsoft/TypeScript/pull/49886
+    "allowJs": true,
     "esModuleInterop": true,
     "target": "ESNext",
     "strict": true,

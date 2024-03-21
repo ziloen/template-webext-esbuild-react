@@ -1,7 +1,5 @@
 import Browser from 'webextension-polyfill'
 
 Browser.runtime.onConnect.addListener(() => {
-  console.log()
+  console.log('Hello from the background script!')
 })
-
-Browser.runtime.getURL("a")

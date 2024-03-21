@@ -1,11 +1,13 @@
-import type { TransformOptions } from '@babel/core'
 import { transform } from '@babel/core'
-import type { Plugin } from 'esbuild'
 import fs from 'fs-extra'
 
-// https://github.com/babel/babel/blob/main/packages/babel-plugin-transform-react-pure-annotations/src/index.ts
+/**
+ * @typedef {import('@babel/core').TransformOptions} TransformOptions
+ * @typedef {import('esbuild').Plugin} Plugin
+ */
 
-const PURE_CALLS: Record<string, (string | string[])[]> = {
+/** @type {import("babel-plugin-annotate-module-pure").Options["pureCalls"]} */
+const PURE_CALLS = {
   react: [
     'cloneElement',
     'createContext',
@@ -48,9 +50,11 @@ const PURE_CALLS: Record<string, (string | string[])[]> = {
 
 /**
  * This plugin is used to mark some function calls as pure, so that they can be removed by the minifier.
+ * @returns {Plugin}
  */
-export function esbuildBabel(): Plugin {
-  const config: TransformOptions = {
+export function esbuildBabel() {
+  /** @type {TransformOptions} */
+  const config = {
     parserOpts: {
       plugins: ['jsx', 'typescript'],
     },
@@ -64,13 +68,17 @@ export function esbuildBabel(): Plugin {
     ],
   }
 
-  function transformContents(code: string) {
-    return new Promise<string>((resolve, reject) => {
+  /**
+   * @param {string} code
+   * @returns {Promise<string>}
+   */
+  function transformContents(code) {
+    return new Promise((resolve, reject) => {
       transform(code, config, (err, result) => {
         if (err) {
           reject(err)
         } else {
-          resolve(result!.code!)
+          resolve(/** @type **/ (result).code)
         }
       })
     })

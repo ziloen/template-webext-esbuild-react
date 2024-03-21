@@ -1,4 +1,3 @@
-import type { BuildOptions } from 'esbuild'
 import { build, context } from 'esbuild'
 import { copy as CopyPlugin } from 'esbuild-plugin-copy'
 import stylePlugin from 'esbuild-style-plugin'
@@ -7,36 +6,30 @@ import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../tailwind.config'
-import { esbuildBabel } from './plugins/babel'
-import { isDev, isFirefoxEnv, r } from './utils'
+import { esbuildBabel } from './plugins/babel.mjs'
+import { isDev, isFirefoxEnv, r } from './utils.mjs'
+
+/**
+ * @typedef {import('esbuild').BuildOptions} BuildOptions
+ */
 
 const fullConfig = resolveConfig(tailwindConfig)
 const cwd = process.cwd()
 const outdir = r('dist/dev')
 
-const options: BuildOptions = {
-  entryPoints: [
-    r('src/background/main.ts'),
-    r('src/devtools/main.ts'),
-    r('src/pages/devtools-panel/main.tsx'),
-    r('src/pages/options/main.tsx'),
-  ],
-  legalComments: 'eof',
-  supported: {
-    nesting: false,
-  },
+/**
+ * @type {BuildOptions}
+ */
+const sharedOptions = {
+  supported: { nesting: false },
   minify: !isDev,
+  legalComments: isDev ? 'none' : 'eof',
   drop: isDev ? [] : ['console', 'debugger'],
   jsx: 'automatic',
   jsxDev: isDev,
-  splitting: true,
-  target: ['chrome100', 'es2022', 'firefox115'],
-  format: 'esm',
-  platform: 'browser',
-  chunkNames: 'chunks/[name]-[hash]',
-  treeShaking: true,
-  bundle: true,
   jsxSideEffects: false,
+  target: ['chrome100', 'es2022', 'firefox115'],
+  chunkNames: 'chunks/[name]-[hash]',
   assetNames: 'assets/[name]-[hash]',
   // https://developer.chrome.com/docs/extensions/reference/api/i18n#overview-predefined
   // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization#predefined_messages
@@ -90,6 +83,32 @@ const options: BuildOptions = {
   ],
 }
 
+/**
+ * @type {BuildOptions}
+ */
+const options = {
+  ...sharedOptions,
+  entryPoints: [
+    r('src/background/main.ts'),
+    r('src/devtools/main.ts'),
+    r('src/pages/devtools-panel/main.tsx'),
+    r('src/pages/options/main.tsx'),
+  ],
+  format: 'esm',
+  platform: 'browser',
+  bundle: true,
+  splitting: true,
+  treeShaking: true,
+}
+
+/**
+ * @type {BuildOptions}
+ */
+const contentScriptOptions = {
+  ...sharedOptions,
+  entryPoints: [r('src/content-scripts/main.ts')],
+}
+
 fs.ensureDirSync(outdir)
 fs.emptyDirSync(outdir)
 writeManifest()
@@ -105,6 +124,5 @@ if (isDev) {
 }
 
 function writeManifest() {
-  console.log('write manifest')
-  execSync('npx esno ./scripts/manifest.ts', { stdio: 'inherit' })
+  execSync('npx esno ./scripts/manifest.mjs', { stdio: 'inherit' })
 }

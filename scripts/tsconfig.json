@@ -6,6 +6,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "noEmit": true,
+    "allowJs": true,
     "types": [
       "node"
     ],
@@ -16,6 +17,6 @@
   },
   "exclude": [],
   "include": [
-    "./**/*.ts",
+    "./**/*.ts", "esbuild.mjs", "utils.mjs", "plugins/babel.mjs", "manifest.mjs",
   ]
 }

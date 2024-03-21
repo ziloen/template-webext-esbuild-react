@@ -1,9 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development esno scripts/esbuild.ts",
-    "build": "cross-env NODE_ENV=production esno scripts/esbuild.ts",
-    "build:firefox": "cross-env NODE_ENV=production EXTENSION=firefox esno scripts/esbuild.ts"
+    "dev": "cross-env NODE_ENV=development esno scripts/esbuild.mjs",
+    "build": "cross-env NODE_ENV=production esno scripts/esbuild.mjs",
+    "build:firefox": "cross-env NODE_ENV=production EXTENSION=firefox esno scripts/esbuild.mjs"
   },
   "type": "module",
   "devDependencies": {
