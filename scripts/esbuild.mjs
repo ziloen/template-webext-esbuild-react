@@ -23,12 +23,16 @@ const outdir = r('dist/dev')
 const sharedOptions = {
   supported: { nesting: false },
   minify: !isDev,
+  bundle: true,
   legalComments: isDev ? 'none' : 'eof',
   drop: isDev ? [] : ['console', 'debugger'],
+  sourcemap: isDev ? 'external' : false,
+  treeShaking: true,
   jsx: 'automatic',
   jsxDev: isDev,
   jsxSideEffects: false,
   target: ['chrome100', 'es2022', 'firefox115'],
+  platform: 'browser',
   chunkNames: 'chunks/[name]-[hash]',
   assetNames: 'assets/[name]-[hash]',
   // https://developer.chrome.com/docs/extensions/reference/api/i18n#overview-predefined
@@ -95,10 +99,7 @@ const options = {
     r('src/pages/options/main.tsx'),
   ],
   format: 'esm',
-  platform: 'browser',
-  bundle: true,
   splitting: true,
-  treeShaking: true,
 }
 
 /**
@@ -107,22 +108,36 @@ const options = {
 const contentScriptOptions = {
   ...sharedOptions,
   entryPoints: [r('src/content-scripts/main.ts')],
-}
-
-fs.ensureDirSync(outdir)
-fs.emptyDirSync(outdir)
-writeManifest()
-
-if (isDev) {
-  context(options).then(ctx => ctx.watch())
-
-  fs.watchFile(r('src/manifest.ts'), () => {
-    writeManifest()
-  })
-} else {
-  build(options)
+  format: 'iife',
+  splitting: false,
 }
 
 function writeManifest() {
   execSync('npx esno ./scripts/manifest.mjs', { stdio: 'inherit' })
 }
+
+async function main() {
+  fs.ensureDirSync(outdir)
+  fs.emptyDirSync(outdir)
+  writeManifest()
+
+  if (isDev) {
+    const ctxs = await Promise.all([
+      context(options),
+      context(contentScriptOptions),
+    ])
+
+    for (const ctx of ctxs) {
+      ctx.watch()
+    }
+
+    fs.watchFile(r('src/manifest.ts'), () => {
+      writeManifest()
+    })
+  } else {
+    await build(options)
+    await build(contentScriptOptions)
+  }
+}
+
+main()
