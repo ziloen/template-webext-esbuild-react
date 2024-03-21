@@ -17,6 +17,7 @@
   },
   "exclude": [],
   "include": [
-    "./**/*.ts", "esbuild.mjs", "utils.mjs", "plugins/babel.mjs", "manifest.mjs",
+    "./**/*.ts",
+    "./**/*.mjs",
   ]
 }

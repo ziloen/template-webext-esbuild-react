@@ -16,7 +16,14 @@ type ChromiumManifest = {
   }
 }
 
-type MV3 = Omit<Manifest.WebExtensionManifest, MV2Keys> & ChromiumManifest
+type StrictManifest = {
+  permissions?: Permissions[]
+  optional_permissions?: OptionalPermissions[]
+}
+
+type MV3 = Omit<Manifest.WebExtensionManifest, MV2Keys | keyof StrictManifest> &
+  ChromiumManifest &
+  StrictManifest
 
 export function getManifest() {
   const manifest: MV3 = {
@@ -28,8 +35,8 @@ export function getManifest() {
     background: isFirefoxEnv
       ? { scripts: ['./background/mian.js'], type: 'module' }
       : { service_worker: './background/main.js', type: 'module' },
-    permissions: [] as Permissions[],
-    optional_permissions: [] as OptionalPermissions[],
+    permissions: [],
+    optional_permissions: [],
 
     devtools_page: './devtools/index.html',
   }
