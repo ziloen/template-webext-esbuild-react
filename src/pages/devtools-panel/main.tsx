@@ -1,4 +1,4 @@
 import '~/styles'
 
-import './App.css'
+import './main.css'
 
