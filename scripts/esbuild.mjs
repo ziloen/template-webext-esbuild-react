@@ -68,16 +68,6 @@ const sharedOptions = {
   plugins: [
     ...(isDev ? [] : [esbuildBabel()]),
 
-    CopyPlugin({
-      resolveFrom: 'cwd',
-      assets: [
-        { from: 'public/**/*', to: 'dist/dev' },
-        { from: 'src/pages/**/*.html', to: 'dist/dev/pages' },
-        { from: 'src/devtools/index.html', to: 'dist/dev/devtools' },
-      ],
-      watch: isDev,
-    }),
-
     stylePlugin({
       postcss: {
         plugins: [
@@ -92,16 +82,30 @@ const sharedOptions = {
 /**
  * @type {BuildOptions}
  */
-const options = {
+const buildOptions = {
   ...sharedOptions,
   entryPoints: [
     r('src/background/main.ts'),
     r('src/devtools/main.ts'),
     r('src/pages/devtools-panel/main.tsx'),
     r('src/pages/options/main.tsx'),
+    r('src/pages/popup/main.tsx'),
   ],
   format: 'esm',
   splitting: true,
+  plugins: [
+    ...sharedOptions.plugins,
+
+    CopyPlugin({
+      resolveFrom: 'cwd',
+      assets: [
+        { from: 'public/**/*', to: 'dist/dev' },
+        { from: 'src/pages/**/*.html', to: 'dist/dev/pages' },
+        { from: 'src/devtools/index.html', to: 'dist/dev/devtools' },
+      ],
+      watch: isDev,
+    }),
+  ],
 }
 
 /**
@@ -125,7 +129,7 @@ async function main() {
 
   if (isDev) {
     const ctxs = await Promise.all([
-      context(options),
+      context(buildOptions),
       context(contentScriptOptions),
     ])
 
@@ -137,7 +141,7 @@ async function main() {
       writeManifest()
     })
   } else {
-    await build(options)
+    await build(buildOptions)
     await build(contentScriptOptions)
   }
 }

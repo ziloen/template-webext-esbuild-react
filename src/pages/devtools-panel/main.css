@@ -1,10 +1,8 @@
 html,
-body {
-  height: 100%;
-  background-color: #1e2227;
-}
-
+body,
 #root {
   height: 100%;
+  contain: paint;
   overflow: clip;
+  background-color: #1e2227;
 }

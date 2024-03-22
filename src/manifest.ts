@@ -38,7 +38,14 @@ export function getManifest() {
     permissions: [],
     optional_permissions: [],
 
+    action: {
+      default_popup: './pages/popup/index.html',
+    },
     devtools_page: './devtools/index.html',
+    options_ui: {
+      page: './pages/options/index.html',
+      open_in_tab: true,
+    },
   }
 
   if (isFirefoxEnv) {
