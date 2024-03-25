@@ -1,5 +1,6 @@
 /* eslint-disable no-empty-pattern */
-import { test as base, chromium, type BrowserContext } from '@playwright/test'
+import type { BrowserContext } from '@playwright/test'
+import { test as base, chromium, expect } from '@playwright/test'
 import path from 'node:path'
 
 export const test = base.extend<{
@@ -9,8 +10,9 @@ export const test = base.extend<{
   context: async ({}, use) => {
     const pathToExt = path.join(process.cwd(), 'dist/dev')
     const context = await chromium.launchPersistentContext('', {
-      headless: true,
+      headless: false,
       args: [
+        `--headless=new`,
         `--disable-extensions-except=${pathToExt}`,
         `--load-extension=${pathToExt}`,
       ],
@@ -28,4 +30,7 @@ export const test = base.extend<{
   },
 })
 
-test('install extension', async ({ context }) => {})
+test('install extension', async ({ context, page, extensionId }) => {
+  await page.goto(`chrome-extension://${extensionId}/pages/options/index.html`)
+  await expect(page.locator('#root')).toHaveText('Options Page')
+})
