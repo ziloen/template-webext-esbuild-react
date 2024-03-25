@@ -94,7 +94,7 @@ const buildOptions = {
   format: 'esm',
   splitting: true,
   plugins: [
-    ...sharedOptions.plugins,
+    ...(sharedOptions.plugins ?? []),
 
     CopyPlugin({
       resolveFrom: 'cwd',
