@@ -54,9 +54,21 @@ export function getManifest() {
   if (isFirefoxEnv) {
     manifest.browser_specific_settings = {
       gecko: {
-        id: '[ID]',
+        id: 'test@webext.com',
         strict_min_version: '115.0',
       },
+    }
+
+    if (manifest.side_panel) {
+      manifest.sidebar_action = {
+        default_panel: manifest.side_panel.default_path,
+      }
+
+      delete manifest.side_panel
+    }
+
+    if (manifest.permissions) {
+      manifest.permissions = manifest.permissions.filter(p => p !== 'sidePanel')
     }
   } else {
     manifest.minimum_chrome_version = '100'
