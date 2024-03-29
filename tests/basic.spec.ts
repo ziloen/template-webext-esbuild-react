@@ -30,7 +30,7 @@ export const test = base.extend<{
   },
 })
 
-test('install extension', async ({ context, page, extensionId }) => {
+test('Open sidepanel page', async ({ context, page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/pages/options/index.html`)
   await expect(page.locator('#root')).toHaveText('Options Page')
 })

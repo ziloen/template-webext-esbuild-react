@@ -35,7 +35,7 @@ export function getManifest() {
     background: isFirefoxEnv
       ? { scripts: ['./background/mian.js'], type: 'module' }
       : { service_worker: './background/main.js', type: 'module' },
-    permissions: [],
+    permissions: ['sidePanel'],
     optional_permissions: [],
 
     action: {
@@ -45,6 +45,9 @@ export function getManifest() {
     options_ui: {
       page: './pages/options/index.html',
       open_in_tab: true,
+    },
+    side_panel: {
+      default_path: './pages/sidebar/index.html',
     },
   }
 

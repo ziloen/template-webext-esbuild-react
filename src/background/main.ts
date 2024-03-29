@@ -8,3 +8,11 @@ Browser.runtime.onConnect.addListener(() => {
 onMessage('example', ({ data, sender }) => {
   console.log('sender', sender)
 })
+
+onMessage('open-sidebar', ({ data }) => {
+  if (!Browser.sidePanel) {
+    throw new Error('sidePanel is not available')
+  }
+
+  return Browser.sidePanel.open(data)
+})

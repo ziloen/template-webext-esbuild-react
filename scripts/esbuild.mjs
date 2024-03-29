@@ -90,6 +90,7 @@ const buildOptions = {
     r('src/pages/devtools-panel/main.tsx'),
     r('src/pages/options/main.tsx'),
     r('src/pages/popup/main.tsx'),
+    r('src/pages/sidebar/main.tsx'),
   ],
   format: 'esm',
   splitting: true,
