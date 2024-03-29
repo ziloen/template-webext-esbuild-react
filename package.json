@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development esno scripts/esbuild.mjs",
     "build": "cross-env NODE_ENV=production esno scripts/esbuild.mjs && web-ext build --filename=chrome.zip",
@@ -10,7 +11,6 @@
     "pack:zip": "web-ext build --filename=chrome.zip",
     "typecheck": "tsc --noEmit"
   },
-  "type": "module",
   "devDependencies": {
     "@babel/core": "7.24.3",
     "@biomejs/biome": "1.6.3",

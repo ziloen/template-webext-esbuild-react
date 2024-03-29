@@ -9,10 +9,22 @@ onMessage('example', ({ data, sender }) => {
   console.log('sender', sender)
 })
 
-onMessage('open-sidebar', ({ data }) => {
-  if (!Browser.sidePanel) {
-    throw new Error('sidePanel is not available')
+onMessage('open-sidebar', ({ data, sender }) => {
+  if (Browser.sidebarAction) {
+    return Browser.sidebarAction.open()
   }
 
-  return Browser.sidePanel.open(data)
+  if (!Browser.sidePanel) {
+    throw new Error('Sidebar is not available')
+  }
+
+  const windowId = data.windowId ?? sender.tab?.windowId
+
+  if (!windowId) {
+    throw new Error('windowId is not available')
+  }
+
+  return Browser.sidePanel.open({
+    windowId,
+  })
 })
