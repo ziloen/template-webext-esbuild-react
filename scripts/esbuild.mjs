@@ -1,7 +1,11 @@
 import { build, context } from 'esbuild'
 import { copy as CopyPlugin } from 'esbuild-plugin-copy'
+import stylePlugin from 'esbuild-style-plugin'
 import fs from 'fs-extra'
-import { exec, execSync } from 'node:child_process'
+import { execSync } from 'node:child_process'
+import tailwindcss from 'tailwindcss'
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '../tailwind.config'
 import { esbuildBabel } from './plugins/babel.mjs'
 import { isDev, isFirefoxEnv, r } from './utils.mjs'
 
@@ -9,6 +13,7 @@ import { isDev, isFirefoxEnv, r } from './utils.mjs'
  * @typedef {import('esbuild').BuildOptions} BuildOptions
  */
 
+const fullConfig = resolveConfig(tailwindConfig)
 const cwd = process.cwd()
 const outdir = r('dist/dev')
 
@@ -60,7 +65,18 @@ const sharedOptions = {
   ],
   logLevel: 'info',
   color: true,
-  plugins: [...(isDev ? [] : [esbuildBabel()])],
+  plugins: [
+    ...(isDev ? [] : [esbuildBabel()]),
+
+    stylePlugin({
+      postcss: {
+        plugins: [
+          // @ts-expect-error tailwindcss issue
+          tailwindcss(fullConfig),
+        ],
+      },
+    }),
+  ],
 }
 
 /**
@@ -125,14 +141,7 @@ async function main() {
     fs.watchFile(r('src/manifest.ts'), () => {
       writeManifest()
     })
-
-    exec(
-      'npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/dev/tailwind.css --watch'
-    )
   } else {
-    exec(
-      'npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/dev/tailwind.css'
-    )
     await build(buildOptions)
     await build(contentScriptOptions)
   }
