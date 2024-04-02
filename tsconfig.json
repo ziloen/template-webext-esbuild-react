@@ -36,7 +36,8 @@
       "ESNext",
     ],
     "types": [
-      "node"
+      "node",
+      "chrome",
     ],
     "paths": {
       "~/*": [
