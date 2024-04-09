@@ -1,5 +1,6 @@
-import { onMessage } from 'typed-webext/message'
+import { onMessage } from 'typed-webext'
 import Browser from 'webextension-polyfill'
+import { getActiveTab } from '~/utils'
 
 Browser.runtime.onConnect.addListener(() => {
   console.log('Hello from the background script!')
@@ -9,7 +10,7 @@ onMessage('example', ({ data, sender }) => {
   console.log('sender', sender)
 })
 
-onMessage('open-sidebar', ({ data, sender }) => {
+onMessage('open-sidebar', async ({ data = {}, sender }) => {
   if (Browser.sidebarAction) {
     return Browser.sidebarAction.open()
   }
@@ -18,10 +19,13 @@ onMessage('open-sidebar', ({ data, sender }) => {
     throw new Error('Sidebar is not available')
   }
 
-  const windowId = data.windowId ?? sender.tab?.windowId
+  let windowId: number | undefined = data.windowId ?? sender.tab?.windowId
 
-  if (!windowId) {
-    throw new Error('windowId is not available')
+  if (windowId === undefined) {
+    windowId = (await getActiveTab()).windowId
+    if (windowId === undefined) {
+      throw new Error('windowId is not available')
+    }
   }
 
   return Browser.sidePanel.open({

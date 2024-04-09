@@ -1,4 +1,4 @@
-import { sendMessage } from 'typed-webext/message'
+import { sendMessage } from 'typed-webext'
 import Browser from 'webextension-polyfill'
 
 export default function App() {

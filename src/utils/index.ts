@@ -1,4 +1,5 @@
 import type { Events } from 'webextension-polyfill'
+import Browser from 'webextension-polyfill'
 
 /** {@link listenEvent} */
 type InferCallback<T> = T extends Events.Event<infer U> ? U : never
@@ -22,4 +23,12 @@ export function listenEvent<T extends Events.Event<(...args: any[]) => any>>(
     removeListener()
     target.removeListener(callback)
   }
+}
+
+export async function getActiveTab() {
+  const tab = (
+    await Browser.tabs.query({ active: true, currentWindow: true })
+  )[0]
+  if (!tab) throw new Error('No active tab found')
+  return tab
 }

@@ -49,6 +49,13 @@ export function getManifest() {
     side_panel: {
       default_path: './pages/sidebar/index.html',
     },
+    content_scripts: [
+      {
+        matches: ['<all_urls>'],
+        js: ['./content-scripts/main.js'],
+        run_at: 'document_end',
+      },
+    ],
   }
 
   if (isFirefoxEnv) {
