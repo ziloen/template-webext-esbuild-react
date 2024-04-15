@@ -22,16 +22,6 @@
           "url": "https://tailwindcss.com/docs/functions-and-directives#tailwind"
         }
       ]
-    },
-    {
-      "name": "@unocss",
-      "description": "unocss directives",
-      "references": [
-        {
-          "name": "unocss doc",
-          "url": "https://unocss.dev/integrations/postcss#unocss"
-        }
-      ]
     }
   ]
 }
