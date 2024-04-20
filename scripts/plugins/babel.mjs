@@ -78,7 +78,7 @@ export function esbuildBabel() {
         if (err) {
           reject(err)
         } else {
-          resolve(/** @type **/ (result).code)
+          resolve(/** @type **/(result).code)
         }
       })
     })
@@ -97,3 +97,25 @@ export function esbuildBabel() {
     },
   }
 }
+
+export const pure = [
+  'Array.from',
+  'Array.isArray',
+  'Date.now',
+  'Math.abs',
+  'Math.ceil',
+  'Math.floor',
+  'Math.max',
+  'Math.min',
+  'Math.pow',
+  'Math.random',
+  'Math.round',
+  'Number.isFinite',
+  'Number.isInteger',
+  'Number.isNaN',
+  'Object.entries',
+  'Object.keys',
+  'Object.values',
+  'crypto.randomUUID',
+  'document.createElement',
+]

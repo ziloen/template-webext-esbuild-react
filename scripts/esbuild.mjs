@@ -6,7 +6,7 @@ import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../tailwind.config'
-import { esbuildBabel } from './plugins/babel.mjs'
+import { esbuildBabel, pure } from './plugins/babel.mjs'
 import { isDev, isFirefoxEnv, r } from './utils.mjs'
 
 /**
@@ -53,16 +53,7 @@ const sharedOptions = {
     '.woff': 'file',
     '.woff2': 'file',
   },
-  pure: [
-    'Math.random',
-    'Math.floor',
-    'Math.ceil',
-    'Math.round',
-    'Math.abs',
-    'Math.min',
-    'Math.max',
-    'Math.pow',
-  ],
+  pure: pure,
   logLevel: 'info',
   color: true,
   plugins: [
