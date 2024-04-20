@@ -117,5 +117,9 @@ export const pure = [
   'Object.keys',
   'Object.values',
   'crypto.randomUUID',
+  'decodeURI',
+  'decodeURIComponent',
   'document.createElement',
+  'encodeURI',
+  'encodeURIComponent',
 ]
