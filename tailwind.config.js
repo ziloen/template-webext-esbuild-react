@@ -1,3 +1,4 @@
+import containerQuries from '@tailwindcss/container-queries'
 import { defineConfig, preset } from '@ziloen/tailwind-config'
 
 export default defineConfig({
@@ -29,4 +30,5 @@ export default defineConfig({
       },
     },
   },
+  plugins: [containerQuries],
 })
