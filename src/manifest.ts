@@ -68,8 +68,8 @@ export function getManifest() {
     }
 
     if (isCI) {
-      manifest.name += " (Nightly)"
-      manifest.browser_specific_settings.gecko!.update_url = ""
+      // manifest.name += " (Nightly)"
+      // manifest.browser_specific_settings.gecko!.update_url = ""
     }
 
     if (manifest.side_panel) {
@@ -87,8 +87,8 @@ export function getManifest() {
     manifest.minimum_chrome_version = '100'
 
     if (isCI) {
-      manifest.name += " (Nightly)"
-      manifest.update_url = ""
+      // manifest.name += " (Nightly)"
+      // manifest.update_url = ""
     }
   }
 
