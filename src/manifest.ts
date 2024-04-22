@@ -1,5 +1,5 @@
 import type { Manifest } from 'webextension-polyfill'
-import { isDev, isFirefoxEnv } from '../scripts/utils.mjs'
+import { isCI, isDev, isFirefoxEnv } from '../scripts/utils.mjs'
 
 type ChromiumPermissions = 'sidePanel'
 type Permissions =
@@ -14,6 +14,7 @@ type ChromiumManifest = {
   side_panel?: {
     default_path: string
   }
+  update_url?: string
 }
 
 type StrictManifest = {
@@ -66,6 +67,11 @@ export function getManifest() {
       },
     }
 
+    if (isCI) {
+      manifest.name += " (Nightly)"
+      manifest.browser_specific_settings.gecko!.update_url = ""
+    }
+
     if (manifest.side_panel) {
       manifest.sidebar_action = {
         default_panel: manifest.side_panel.default_path,
@@ -79,6 +85,11 @@ export function getManifest() {
     }
   } else {
     manifest.minimum_chrome_version = '100'
+
+    if (isCI) {
+      manifest.name += " (Nightly)"
+      manifest.update_url = ""
+    }
   }
 
   return manifest
