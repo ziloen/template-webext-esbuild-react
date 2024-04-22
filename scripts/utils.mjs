@@ -10,3 +10,4 @@ export function r(...args) {
 }
 export const isDev = process.env.NODE_ENV !== 'production'
 export const isFirefoxEnv = process.env.EXTENSION === 'firefox'
+export const isCI = process.env.CI === 'true'
