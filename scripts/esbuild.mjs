@@ -6,7 +6,7 @@ import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
 import resolveConfig from 'tailwindcss/resolveConfig.js'
 import tailwindConfig from '../tailwind.config.js'
-import { esbuildBabel, pure } from './plugins/babel.mjs'
+import { BabelPlugin, pure } from './plugins/babel.mjs'
 import { isDev, isFirefoxEnv, r } from './utils.mjs'
 
 /**
@@ -57,7 +57,7 @@ const sharedOptions = {
   logLevel: 'info',
   color: true,
   plugins: [
-    ...(isDev ? [] : [esbuildBabel()]),
+    ...(isDev ? [] : [BabelPlugin()]),
 
     stylePlugin({
       postcss: {

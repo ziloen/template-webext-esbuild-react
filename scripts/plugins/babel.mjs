@@ -52,7 +52,7 @@ const PURE_CALLS = {
  * This plugin is used to mark some function calls as pure, so that they can be removed by the minifier.
  * @returns {Plugin}
  */
-export function esbuildBabel() {
+export function BabelPlugin() {
   /** @type {TransformOptions} */
   const config = {
     parserOpts: {
@@ -78,7 +78,7 @@ export function esbuildBabel() {
         if (err) {
           reject(err)
         } else {
-          resolve(/** @type **/(result).code)
+          resolve(/** @type **/ (result).code)
         }
       })
     })
