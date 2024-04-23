@@ -11,7 +11,9 @@
     "pack:zip": "web-ext build --filename=chrome.zip",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "init:playwright": "playwright install chromium --with-deps",
+    "test:playwright": "playwright test"
   },
   "devDependencies": {
     "@babel/core": "7.24.4",
