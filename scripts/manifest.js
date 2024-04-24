@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import { getManifest } from '../src/manifest'
-import { r } from './utils.mjs'
+import { r } from './utils'
 
 function writeManifest() {
   console.log('write manifest')

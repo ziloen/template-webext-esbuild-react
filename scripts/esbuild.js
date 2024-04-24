@@ -6,8 +6,8 @@ import { execSync } from 'node:child_process'
 import tailwindcss from 'tailwindcss'
 import resolveConfig from 'tailwindcss/resolveConfig.js'
 import tailwindConfig from '../tailwind.config.js'
-import { BabelPlugin, pure } from './plugins/babel.mjs'
-import { isDev, isFirefoxEnv, r } from './utils.mjs'
+import { BabelPlugin, pure } from './plugins/babel.js'
+import { isDev, isFirefoxEnv, r } from './utils.js'
 
 /**
  * @typedef {import('esbuild').BuildOptions} BuildOptions
@@ -111,7 +111,7 @@ const contentScriptOptions = {
 }
 
 function writeManifest() {
-  execSync('tsx ./scripts/manifest.mjs', { stdio: 'inherit' })
+  execSync('tsx ./scripts/manifest.js', { stdio: 'inherit' })
 }
 
 async function main() {

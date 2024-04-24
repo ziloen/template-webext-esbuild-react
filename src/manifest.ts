@@ -1,5 +1,5 @@
 import type { Manifest } from 'webextension-polyfill'
-import { isCI, isDev, isFirefoxEnv } from '../scripts/utils.mjs'
+import { isCI, isDev, isFirefoxEnv } from '../scripts/utils'
 
 type ChromiumPermissions = 'sidePanel'
 type Permissions =
