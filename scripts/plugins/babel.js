@@ -3,7 +3,6 @@ import fs from 'fs-extra'
 
 /**
  * @typedef {import('@babel/core').TransformOptions} TransformOptions
- * @typedef {import('esbuild').Plugin} Plugin
  */
 
 /** @type {import("babel-plugin-annotate-module-pure").Options["pureCalls"]} */
@@ -50,7 +49,7 @@ const PURE_CALLS = {
 
 /**
  * This plugin is used to mark some function calls as pure, so that they can be removed by the minifier.
- * @returns {Plugin}
+ * @returns {import('esbuild').Plugin}
  */
 export function BabelPlugin() {
   /** @type {TransformOptions} */

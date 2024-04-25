@@ -30,6 +30,7 @@
     "@ziloen/eslint-config": "0.1.23",
     "@ziloen/tailwind-config": "1.1.8",
     "babel-plugin-annotate-module-pure": "1.0.2",
+    "chokidar": "3.6.0",
     "cross-env": "7.0.3",
     "esbuild": "0.20.2",
     "esbuild-plugin-copy": "2.1.1",
