@@ -2,6 +2,8 @@
  * https://github.com/LinbuduLab/esbuild-plugins/tree/main/packages/esbuild-plugin-copy
  */
 import fs from 'fs-extra'
+import { globby } from 'globby'
+import path from 'node:path'
 
 /**
  * @typedef {object} AssetPair
@@ -15,19 +17,31 @@ import fs from 'fs-extra'
  * @typedef {object} CopyPluginOptions
  * @property {AssetPair | AssetPair[]} assets
  * @property {(code: string) => (string | Promise<string>)} [transform]
+ * @property {boolean} [watch=false]
  */
 
 /**
  * @param {CopyPluginOptions} options
  * @returns {import('esbuild').Plugin}
  */
-export function CopyPlugin({ assets, transform }) {
+export function CopyPlugin({ assets, transform, watch = false }) {
   assets = formatAssets(assets)
 
   return {
     name: 'copy',
     setup(build) {
-      build.onEnd(async result => {})
+      if (!assets.length) return
+
+      const outDir = build.initialOptions.outdir
+
+      build.onEnd(async result => {
+        for await (const asset of assets) {
+          const fromPaths = await globby(asset.from, {
+            expandDirectories: false,
+            onlyFiles: true,
+          })
+        }
+      })
     },
   }
 }
