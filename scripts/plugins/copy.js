@@ -27,9 +27,7 @@ export function CopyPlugin({ assets, transform }) {
   return {
     name: 'copy',
     setup(build) {
-      build.onEnd(async result => {
-        
-      })
+      build.onEnd(async result => {})
     },
   }
 }

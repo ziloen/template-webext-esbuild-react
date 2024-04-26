@@ -2,7 +2,7 @@ import { transform } from '@babel/core'
 import fs from 'fs-extra'
 
 /**
- * @typedef {import('@babel/core').TransformOptions} TransformOptions
+ * @import { TransformOptions } from "@babel/core"
  */
 
 /** @type {import("babel-plugin-annotate-module-pure").Options["pureCalls"]} */
