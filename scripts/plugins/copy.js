@@ -1,6 +1,8 @@
+/* eslint-disable no-inner-declarations */
 /**
  * https://github.com/LinbuduLab/esbuild-plugins/tree/main/packages/esbuild-plugin-copy
  */
+import chokidar from 'chokidar'
 import fs from 'fs-extra'
 import { globby } from 'globby'
 import path from 'node:path'
@@ -24,7 +26,11 @@ import path from 'node:path'
  * @param {CopyPluginOptions} options
  * @returns {import('esbuild').Plugin}
  */
-export function CopyPlugin({ assets, transform, watch = false }) {
+export function CopyPlugin({
+  assets,
+  transform: globalTrasform,
+  watch = false,
+}) {
   assets = formatAssets(assets)
 
   return {
@@ -36,10 +42,27 @@ export function CopyPlugin({ assets, transform, watch = false }) {
 
       build.onEnd(async result => {
         for await (const asset of assets) {
-          const fromPaths = await globby(asset.from, {
-            expandDirectories: false,
-            onlyFiles: true,
-          })
+          const fromPaths = [
+            ...new Set(
+              await globby(asset.from, {
+                expandDirectories: false,
+                onlyFiles: true,
+              })
+            ),
+          ]
+
+          function executor() {
+            for (const fromPath of fromPaths) {
+            }
+          }
+
+          if (watch) {
+            const watcher = chokidar.watch(asset.from, {
+              disableGlobbing: false,
+            })
+
+            watcher.on('change', fromPath => {})
+          }
         }
       })
     },
@@ -53,6 +76,14 @@ export function CopyPlugin({ assets, transform, watch = false }) {
 function formatAssets(assets) {
   assets = Array.isArray(assets) ? assets : [assets]
   return assets.filter(asset => asset.from && asset.to)
+}
+
+function copy({ transform, from, to }) {
+  const content = fs.readFileSync(from, 'utf-8')
+  const code = transform ? transform(content) : content
+  const toPath = path.join(to, path.basename(from))
+  fs.ensureDirSync(path.dirname(toPath))
+  fs.writeFileSync(toPath, code)
 }
 
 // Add `<script src="http://localhost:8097"></script>` to the end of the head tag
