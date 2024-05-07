@@ -84,6 +84,7 @@ export function getManifest() {
       manifest.permissions = manifest.permissions.filter(p => p !== 'sidePanel')
     }
   } else {
+    // sidePanel: Chrome 114+
     manifest.minimum_chrome_version = '100'
 
     if (isCI) {
