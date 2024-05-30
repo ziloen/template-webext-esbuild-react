@@ -1,4 +1,3 @@
-/* eslint-disable no-inner-declarations */
 /**
  * https://github.com/LinbuduLab/esbuild-plugins/tree/main/packages/esbuild-plugin-copy
  */

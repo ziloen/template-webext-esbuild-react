@@ -53,5 +53,7 @@
     "node_modules",
     "public",
     "scripts",
+    "test-results",
+    "playwright-report",
   ]
 }
