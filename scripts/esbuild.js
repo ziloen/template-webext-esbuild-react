@@ -137,6 +137,9 @@ async function main() {
     const result = await build(buildOptions)
     const contentScriptResult = await build(contentScriptOptions)
 
+    // https://esbuild.github.io/analyze/
+    // Analysis of the bundle
+
     fs.writeFileSync(
       r('dist/meta.json'),
       JSON.stringify(result.metafile, null, 2)
