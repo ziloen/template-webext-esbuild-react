@@ -31,6 +31,7 @@ const sharedOptions = {
   jsx: 'automatic',
   jsxDev: isDev,
   jsxSideEffects: false,
+  metafile: !isDev,
   target: ['chrome100', 'es2022', 'firefox115'],
   platform: 'browser',
   chunkNames: 'chunks/[name]-[hash]',
@@ -133,8 +134,18 @@ async function main() {
       writeManifest()
     })
   } else {
-    await build(buildOptions)
-    await build(contentScriptOptions)
+    const result = await build(buildOptions)
+    const contentScriptResult = await build(contentScriptOptions)
+
+    fs.writeFileSync(
+      r('dist/meta.json'),
+      JSON.stringify(result.metafile, null, 2)
+    )
+
+    fs.writeFileSync(
+      r('dist/content-script-meta.json'),
+      JSON.stringify(contentScriptResult.metafile, null, 2)
+    )
   }
 }
 
