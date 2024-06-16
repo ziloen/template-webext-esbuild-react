@@ -5,4 +5,7 @@ export default [
   ...react({
     project: ['./src/tsconfig.json', './tsconfig.json'],
   }),
+  {
+    ignores: ['**/scripts'],
+  },
 ]
