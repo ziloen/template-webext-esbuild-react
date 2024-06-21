@@ -6,6 +6,6 @@ export default [
     project: ['./src/tsconfig.json', './tsconfig.json'],
   }),
   {
-    ignores: ['**/scripts'],
+    ignores: ['scripts'],
   },
 ]
