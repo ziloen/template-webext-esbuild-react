@@ -17,7 +17,6 @@
   "editor.codeActionsOnSave": [
     "source.sortImports",
   ],
-  "eslint.experimental.useFlatConfig": true,
   "eslint.format.enable": false,
   "prettier.enable": true,
   "typescript.preferences.autoImportFileExcludePatterns": [
