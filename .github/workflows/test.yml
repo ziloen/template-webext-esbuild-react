@@ -9,9 +9,7 @@ on:
 jobs:
   test:
     timeout-minutes: 5
-    # https://github.com/microsoft/playwright/issues/30368
-    # ubuntu-22.04 is not supported yet
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
