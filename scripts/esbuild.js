@@ -26,7 +26,7 @@ const sharedOptions = {
   bundle: true,
   legalComments: isDev ? 'none' : 'eof',
   drop: isDev ? [] : ['console', 'debugger'],
-  sourcemap: isDev ? 'external' : false,
+  sourcemap: isDev ? 'inline' : false,
   treeShaking: true,
   jsx: 'automatic',
   jsxDev: isDev,

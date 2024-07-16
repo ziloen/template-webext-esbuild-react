@@ -113,6 +113,7 @@ export const pure = [
   'Number.isInteger',
   'Number.isNaN',
   'Object.entries',
+  'Object.hasOwn',
   'Object.keys',
   'Object.values',
   'crypto.randomUUID',
