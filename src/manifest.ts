@@ -63,7 +63,7 @@ export function getManifest() {
     manifest.browser_specific_settings = {
       gecko: {
         id: 'test@webext.com',
-        strict_min_version: '115.0',
+        strict_min_version: '128.0',
       },
     }
 
@@ -85,7 +85,7 @@ export function getManifest() {
     }
   } else {
     // sidePanel: Chrome 114+
-    manifest.minimum_chrome_version = '100'
+    manifest.minimum_chrome_version = '114'
 
     if (isCI) {
       // manifest.name += " (Nightly)"
