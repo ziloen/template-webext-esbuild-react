@@ -57,7 +57,7 @@ export function CopyPlugin({
 
           if (watch) {
             const watcher = chokidar.watch(asset.from, {
-              disableGlobbing: false,
+              // disableGlobbing: false,
             })
 
             watcher.on('change', fromPath => {})
