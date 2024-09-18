@@ -58,7 +58,7 @@ const sharedOptions = {
   logLevel: 'info',
   color: true,
   plugins: [
-    ...(isDev ? [] : [BabelPlugin()]),
+    ...(isDev ? [BabelPlugin()] : [BabelPlugin()]),
 
     stylePlugin({
       postcss: {
