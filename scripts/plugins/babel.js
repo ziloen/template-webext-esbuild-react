@@ -64,7 +64,7 @@ export function BabelPlugin() {
           pureCalls: PURE_CALLS,
         },
       ],
-      ['react-refresh/babel', { skipEnvCheck: true }],
+      // ['react-refresh/babel', { skipEnvCheck: true }],
     ],
   }
 
