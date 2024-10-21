@@ -18,8 +18,12 @@
     "source.sortImports",
   ],
   "eslint.format.enable": false,
+  "javascript.preferences.autoImportSpecifierExcludeRegexes": [
+    "node:console",
+    "console"
+  ],
   "prettier.enable": true,
-  "typescript.preferences.autoImportFileExcludePatterns": [
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
     "node:console",
     "console"
   ],
