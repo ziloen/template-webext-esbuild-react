@@ -1,11 +1,9 @@
+import tailwindcss from '@tailwindcss/postcss'
 import { build, context } from 'esbuild'
 import { copy as CopyPlugin } from 'esbuild-plugin-copy'
 import stylePlugin from 'esbuild-style-plugin'
 import fs from 'fs-extra'
 import { execSync } from 'node:child_process'
-import tailwindcss from 'tailwindcss'
-import resolveConfig from 'tailwindcss/resolveConfig.js'
-import tailwindConfig from '../tailwind.config.js'
 import { BabelPlugin, pure } from './plugins/babel.js'
 import { isDev, isFirefoxEnv, r } from './utils.js'
 
@@ -13,7 +11,6 @@ import { isDev, isFirefoxEnv, r } from './utils.js'
  * @typedef {import('esbuild').BuildOptions} BuildOptions
  */
 
-const fullConfig = resolveConfig(tailwindConfig)
 const cwd = process.cwd()
 const outdir = r('dist/dev')
 
@@ -62,10 +59,7 @@ const sharedOptions = {
 
     stylePlugin({
       postcss: {
-        plugins: [
-          // @ts-expect-error tailwindcss issue
-          tailwindcss(fullConfig),
-        ],
+        plugins: [tailwindcss],
       },
     }),
   ],

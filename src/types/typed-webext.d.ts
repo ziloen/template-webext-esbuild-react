@@ -8,5 +8,14 @@ declare module 'typed-webext' {
 
   interface StreamProtocol {}
 
-  interface StorageLocalProtocol {}
+  interface StorageLocalProtocol {
+    'tips-records': Record<
+      string,
+      {
+        viewed: boolean
+        timestamp: number
+        priority: number
+      }
+    >
+  }
 }

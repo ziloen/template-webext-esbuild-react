@@ -1,3 +1,1 @@
-@tailwind base;
-@tailwind utilities;
-@tailwind components;
+@import "@ziloen/tailwind-config/preset.css";

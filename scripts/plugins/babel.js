@@ -1,5 +1,9 @@
 import { transform } from '@babel/core'
+import { valueToNode } from '@babel/types'
 import fs from 'fs-extra'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
 
 /**
  * @import { TransformOptions } from "@babel/core"
@@ -45,6 +49,13 @@ const PURE_CALLS = {
   'serialize-error': ['deserializeError', 'serializeError'],
   clsx: ['default', 'clsx'],
   'clsx/lite': ['default', 'clsx'],
+
+  // Not installed
+  'mobx-react-lite': ['observer'],
+  'mobx-react': ['observer'],
+  classnames: ['default'],
+  uuid: ['v4'],
+  'tailwind-merge': ['twMerge', 'extendTailwindMerge'],
 }
 
 /**
@@ -64,6 +75,33 @@ export function BabelPlugin() {
           pureCalls: PURE_CALLS,
         },
       ],
+      // Precompute pure `clsx` calls
+      {
+        visitor: {
+          CallExpression(path, state) {
+            const clleePath = path.get('callee')
+
+            if (!(clleePath.isIdentifier() && clleePath.node.name === 'clsx')) {
+              return
+            }
+
+            const args = path.get('arguments')
+
+            const classNames = []
+
+            for (const arg of args) {
+              if (!arg.isStringLiteral()) {
+                return
+              }
+              classNames.push(arg.node.value)
+            }
+
+            const clsx = require('clsx')
+
+            path.replaceWith(valueToNode(clsx(classNames)))
+          },
+        },
+      },
       // ['react-refresh/babel', { skipEnvCheck: true }],
     ],
   }
