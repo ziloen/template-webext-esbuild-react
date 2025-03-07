@@ -5,7 +5,6 @@
     "allowJs": true,
     "types": [
       "ts-lib-enhance",
-      "ts-lib-enhance/view-transition",
       "chrome",
     ],
   }
