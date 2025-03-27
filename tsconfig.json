@@ -12,6 +12,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "exactOptionalPropertyTypes": false,
+    "erasableSyntaxOnly": true,
     "noImplicitAny": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,

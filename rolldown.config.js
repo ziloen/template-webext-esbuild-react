@@ -6,13 +6,15 @@ import { isDev, isFirefoxEnv, r } from './scripts/utils.js'
  * @import { RolldownOptions } from "rolldown"
  */
 
-const outdir = r('dist')
+const outdir = r('dist/dev')
 
 /**
  * @type {RolldownOptions}
  */
 const sharedOptions = {
-  outdir,
+  output: {
+    dir: outdir,
+  },
   resolve: {
     alias: {
       '~': r('src'),
@@ -43,6 +45,7 @@ export default defineConfig([
       'content-script/main': r('src/content-scripts/main.ts'),
     },
     output: {
+      ...sharedOptions.output,
       format: 'iife',
     },
   },
@@ -57,6 +60,7 @@ export default defineConfig([
       'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
     },
     output: {
+      ...sharedOptions.output,
       format: 'esm',
     },
   },
