@@ -1,12 +1,20 @@
 import url from '@rollup/plugin-url'
-import { defineConfig } from 'rolldown'
-import { isDev, isFirefoxEnv, r } from './scripts/utils.js'
+import fs from 'fs-extra'
+import { execSync } from 'node:child_process'
+import { build, watch } from 'rolldown'
+import copy from 'rollup-plugin-copy'
+import { isDev, isFirefoxEnv, r } from './utils.js'
 
 /**
- * @import { RolldownOptions } from "rolldown"
+ * @import { RolldownOptions, BuildOptions } from "rolldown"
  */
 
+const cwd = process.cwd()
 const outdir = r('dist/dev')
+
+function writeManifest() {
+  execSync('tsx ./scripts/manifest.js', { stdio: 'inherit' })
+}
 
 /**
  * @type {RolldownOptions}
@@ -15,6 +23,7 @@ const sharedOptions = {
   output: {
     dir: outdir,
   },
+  logLevel: isDev ? 'debug' : 'debug',
   resolve: {
     alias: {
       '~': r('src'),
@@ -38,7 +47,10 @@ const sharedOptions = {
   ],
 }
 
-export default defineConfig([
+/**
+ * @type {BuildOptions[]}
+ */
+const buildOptions = [
   {
     ...sharedOptions,
     input: {
@@ -48,6 +60,18 @@ export default defineConfig([
       ...sharedOptions.output,
       format: 'iife',
     },
+    plugins: [
+      .../**@type{*} */ (sharedOptions.plugins),
+      copy({
+        cwd: cwd,
+        flatten: false,
+        targets: [
+          { src: 'public/**/*', dest: 'dist/dev' },
+          { src: 'src/pages/**/*.html', dest: 'dist/dev' },
+          { src: 'src/devtools/index.html', dest: 'dist/dev' },
+        ],
+      }),
+    ],
   },
   {
     ...sharedOptions,
@@ -64,4 +88,22 @@ export default defineConfig([
       format: 'esm',
     },
   },
-])
+]
+
+async function main() {
+  fs.ensureDirSync(outdir)
+  fs.emptyDirSync(outdir)
+  writeManifest()
+
+  if (isDev) {
+    const watcher = watch(buildOptions)
+
+    fs.watchFile(r('src/manifest.ts'), () => {
+      writeManifest()
+    })
+  } else {
+    const result = await build(buildOptions)
+  }
+}
+
+main()
