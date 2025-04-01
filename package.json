@@ -9,8 +9,6 @@
     "build:firefox": "cross-env NODE_ENV=production EXTENSION=firefox node scripts/esbuild.js && web-ext build --filename=firefox.xpi",
     "start:chromium": "web-ext run --target=chromium",
     "start:firefox": "web-ext run --target=firefox-desktop",
-    "pack:xpi": "web-ext build --filename=firefox.xpi",
-    "pack:zip": "web-ext build --filename=chrome.zip",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",

@@ -1,6 +1,8 @@
 import url from '@rollup/plugin-url'
+import tailwindcss from '@tailwindcss/postcss'
 import fs from 'fs-extra'
 import { execSync } from 'node:child_process'
+import postcss from 'postcss'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { isDev, isFirefoxEnv, r } from './utils.js'
@@ -22,6 +24,7 @@ function writeManifest() {
 const sharedOptions = {
   output: {
     dir: outdir,
+    comments: 'preserve-legal',
   },
   logLevel: isDev ? 'debug' : 'debug',
   resolve: {
@@ -37,6 +40,26 @@ const sharedOptions = {
     'moz-extension://__MSG_@@extension_id__/*',
   ],
   plugins: [
+    {
+      name: 'postcss',
+      transform: {
+        filter: {
+          id: /\.css$/,
+        },
+        handler(code, id, meta) {
+          return postcss([tailwindcss])
+            .process(code, {
+              from: id,
+              to: id,
+              map: false,
+            })
+            .then(result => ({
+              code: result.css,
+              map: { mappings: '' },
+            }))
+        },
+      },
+    },
     url({
       include: ['**/*.woff', '**/*.woff2'],
       limit: 0,

@@ -1,7 +1,6 @@
-import { expect } from '@playwright/test'
-import { testExt } from './base'
+import { expect, test } from './base'
 
-testExt('Open sidepanel page', async ({ context, page, extensionId }) => {
+test('Open sidepanel page', async ({ context, page, extensionId }) => {
   const optionsUrl = `chrome-extension://${extensionId}/pages/options/index.html`
   const sidebarUrl = `chrome-extension://${extensionId}/pages/sidebar/index.html`
 

@@ -2,18 +2,16 @@ import type { BrowserContext } from '@playwright/test'
 import { test as base, chromium } from '@playwright/test'
 import path from 'node:path'
 
-process.env.PW_CHROMIUM_ATTACH_TO_OTHER = '1'
-const pathToExt = path.join(process.cwd(), 'dist/dev')
-
-export const testExt = base.extend<{
+export const test = base.extend<{
   context: BrowserContext
   extensionId: string
 }>({
   context: async ({ browser }, use) => {
+    const pathToExt = path.join(process.cwd(), 'dist/dev')
+
     const context = await chromium.launchPersistentContext('', {
-      headless: false,
+      channel: 'chromium',
       args: [
-        `--headless=new`,
         `--disable-extensions-except=${pathToExt}`,
         `--load-extension=${pathToExt}`,
       ],
@@ -30,3 +28,5 @@ export const testExt = base.extend<{
     await use(extensionId)
   },
 })
+
+export const expect = test.expect
