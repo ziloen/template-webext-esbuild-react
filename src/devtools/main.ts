@@ -5,7 +5,7 @@ if (Browser.devtools && Browser.devtools.panels) {
 
   Browser.devtools.panels
     .create('WebExt Storage', '', '/pages/devtools-panel/index.html')
-    .then(panel => {
-      panel.onShown.addListener(panelWindow => {})
+    .then((panel) => {
+      panel.onShown.addListener((panelWindow) => {})
     })
 }

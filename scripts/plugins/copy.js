@@ -39,14 +39,14 @@ export function CopyPlugin({
 
       const outDir = build.initialOptions.outdir
 
-      build.onEnd(async result => {
+      build.onEnd(async (result) => {
         for await (const asset of assets) {
           const fromPaths = [
             ...new Set(
               await globby(asset.from, {
                 expandDirectories: false,
                 onlyFiles: true,
-              })
+              }),
             ),
           ]
 
@@ -60,7 +60,7 @@ export function CopyPlugin({
               // disableGlobbing: false,
             })
 
-            watcher.on('change', fromPath => {})
+            watcher.on('change', (fromPath) => {})
           }
         }
       })
@@ -74,7 +74,7 @@ export function CopyPlugin({
  */
 function formatAssets(assets) {
   assets = Array.isArray(assets) ? assets : [assets]
-  return assets.filter(asset => asset.from && asset.to)
+  return assets.filter((asset) => asset.from && asset.to)
 }
 
 function copy({ transform, from, to }) {

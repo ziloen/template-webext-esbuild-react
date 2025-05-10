@@ -1,7 +1,7 @@
 declare module 'react' {
   // fix react forwardRef, https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
   function forwardRef<T, P = {}>(
-    render: (props: P, ref: ForwardedRef<T>) => ReactElement | null
+    render: (props: P, ref: ForwardedRef<T>) => ReactElement | null,
   ): (props: P & RefAttributes<T>) => ReactElement | null
 
   // allow style to use css custom properties
@@ -12,15 +12,15 @@ declare module 'react' {
   // allow destructor return value
   function useEffect(
     effect: () => void | (() => void),
-    deps?: DependencyList
+    deps?: DependencyList,
   ): void
   function useInsertionEffect(
     effect: () => void | (() => void),
-    deps?: DependencyList
+    deps?: DependencyList,
   ): void
   function useLayoutEffect(
     effect: () => void | (() => void),
-    deps?: DependencyList
+    deps?: DependencyList,
   ): void
 }
 
@@ -43,5 +43,4 @@ declare module 'webextension-polyfill' {
   }
 }
 
-export { }
-
+export {}

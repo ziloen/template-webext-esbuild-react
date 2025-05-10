@@ -15,11 +15,11 @@ const cwd = process.cwd()
 const outdir = r('dist/dev')
 
 function writeManifest() {
-  execSync('tsx ./scripts/manifest.js', { stdio: 'inherit' })
+  execSync('tsx ./scripts/gen-manifest.ts', { stdio: 'inherit' })
 }
 
 /**
- * @type {RolldownOptions}
+ * @satisfies {RolldownOptions}
  */
 const sharedOptions = {
   output: {
@@ -27,6 +27,7 @@ const sharedOptions = {
     comments: 'preserve-legal',
   },
   logLevel: isDev ? 'debug' : 'debug',
+  platform: 'browser',
   resolve: {
     alias: {
       '~': r('src'),
@@ -53,7 +54,7 @@ const sharedOptions = {
               to: id,
               map: false,
             })
-            .then(result => ({
+            .then((result) => ({
               code: result.css,
               map: { mappings: '' },
             }))
@@ -77,14 +78,14 @@ const buildOptions = [
   {
     ...sharedOptions,
     input: {
-      'content-script/main': r('src/content-scripts/main.ts'),
+      'content-scripts/main': r('src/content-scripts/main.ts'),
     },
     output: {
       ...sharedOptions.output,
       format: 'iife',
     },
     plugins: [
-      .../**@type{*} */ (sharedOptions.plugins),
+      ...sharedOptions.plugins,
       copy({
         cwd: cwd,
         flatten: false,
@@ -121,7 +122,7 @@ async function main() {
   if (isDev) {
     const watcher = watch(buildOptions)
 
-    fs.watchFile(r('src/manifest.ts'), () => {
+    fs.watchFile(r('scripts/gen-manifest.ts'), () => {
       writeManifest()
     })
   } else {

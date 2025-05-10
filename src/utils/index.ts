@@ -7,7 +7,7 @@ type InferCallback<T> = T extends Events.Event<infer U> ? U : never
 export function listenEvent<T extends Events.Event<(...args: any[]) => any>>(
   target: T,
   callback: InferCallback<NoInfer<T>>,
-  options?: { signal?: AbortSignal }
+  options?: { signal?: AbortSignal },
 ) {
   target.addListener(callback)
 

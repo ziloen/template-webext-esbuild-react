@@ -102,7 +102,6 @@ export function BabelPlugin() {
           },
         },
       },
-      // ['react-refresh/babel', { skipEnvCheck: true }],
     ],
   }
 
@@ -125,7 +124,7 @@ export function BabelPlugin() {
   return {
     name: 'babel',
     setup(build) {
-      build.onLoad({ filter: /\.tsx?$/ }, async args => {
+      build.onLoad({ filter: /\.tsx?$/ }, async (args) => {
         const code = await fs.readFile(args.path, 'utf-8')
         return {
           contents: await transformContents(code),

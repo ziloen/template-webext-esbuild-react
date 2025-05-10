@@ -106,7 +106,7 @@ const contentScriptOptions = {
 }
 
 function writeManifest() {
-  execSync('tsx ./scripts/manifest.js', { stdio: 'inherit' })
+  execSync('tsx ./scripts/gen-manifest.ts', { stdio: 'inherit' })
 }
 
 async function main() {
@@ -124,7 +124,7 @@ async function main() {
       ctx.watch()
     }
 
-    fs.watchFile(r('src/manifest.ts'), () => {
+    fs.watchFile(r('scripts/gen-manifest.ts'), () => {
       writeManifest()
     })
   } else {
@@ -136,12 +136,12 @@ async function main() {
 
     fs.writeFileSync(
       r('dist/meta.json'),
-      JSON.stringify(result.metafile, null, 2)
+      JSON.stringify(result.metafile, null, 2),
     )
 
     fs.writeFileSync(
       r('dist/content-script-meta.json'),
-      JSON.stringify(contentScriptResult.metafile, null, 2)
+      JSON.stringify(contentScriptResult.metafile, null, 2),
     )
   }
 }

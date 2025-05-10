@@ -16,3 +16,5 @@ export const isDev = process.env.NODE_ENV !== 'production'
 export const isFirefoxEnv = process.env.EXTENSION === 'firefox'
 
 export const isCI = process.env.CI === 'true'
+
+export const commitShortHash = process.env.GITHUB_SHA?.slice(0, 7) ?? 'local'

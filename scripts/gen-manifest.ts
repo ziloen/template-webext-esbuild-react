@@ -1,5 +1,6 @@
+import fs from 'fs-extra'
 import type { Manifest } from 'webextension-polyfill'
-import { isCI, isDev, isFirefoxEnv } from '../scripts/utils'
+import { commitShortHash, isCI, isDev, isFirefoxEnv, r } from './utils'
 
 type ChromiumPermissions = 'sidePanel'
 type Permissions =
@@ -26,7 +27,7 @@ type MV3 = Omit<Manifest.WebExtensionManifest, MV2Keys | keyof StrictManifest> &
   ChromiumManifest &
   StrictManifest
 
-export function getManifest() {
+function generateManifest() {
   const manifest: MV3 = {
     version: '0.0.0.1',
     manifest_version: 3,
@@ -67,11 +68,6 @@ export function getManifest() {
       },
     }
 
-    if (isCI) {
-      // manifest.name += " (Nightly)"
-      // manifest.browser_specific_settings.gecko!.update_url = ""
-    }
-
     if (manifest.side_panel) {
       manifest.sidebar_action = {
         default_panel: manifest.side_panel.default_path,
@@ -81,17 +77,28 @@ export function getManifest() {
     }
 
     if (manifest.permissions) {
-      manifest.permissions = manifest.permissions.filter(p => p !== 'sidePanel')
+      manifest.permissions = manifest.permissions.filter(
+        (p) => p !== 'sidePanel',
+      )
     }
   } else {
     // sidePanel: Chrome 114+
     manifest.minimum_chrome_version = '114'
+  }
 
-    if (isCI) {
-      // manifest.name += " (Nightly)"
-      // manifest.update_url = ""
-    }
+  if (isCI) {
+    manifest.version_name = manifest.version + `-${commitShortHash}`
+    manifest.name += ' (Nightly)'
+
+    // if (isFirefoxEnv) {
+    //   manifest.browser_specific_settings.gecko.update_url = ""
+    // } else {
+    //   manifest.update_url = ""
+    // }
   }
 
   return manifest
 }
+
+console.log('write manifest')
+fs.writeJSONSync(r('dist/dev/manifest.json'), generateManifest(), { spaces: 2 })

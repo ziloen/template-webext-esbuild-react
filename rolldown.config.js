@@ -42,7 +42,7 @@ export default defineConfig([
   {
     ...sharedOptions,
     input: {
-      'content-script/main': r('src/content-scripts/main.ts'),
+      'content-scripts/main': r('src/content-scripts/main.ts'),
     },
     output: {
       ...sharedOptions.output,
