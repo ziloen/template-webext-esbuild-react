@@ -1,4 +1,3 @@
-import url from '@rollup/plugin-url'
 import tailwindcss from '@tailwindcss/postcss'
 import fs from 'fs-extra'
 import { execSync } from 'node:child_process'
@@ -40,12 +39,19 @@ const sharedOptions = {
     'chrome-extension://__MSG_@@extension_id__/*',
     'moz-extension://__MSG_@@extension_id__/*',
   ],
+  moduleTypes: {
+    '.woff': 'asset',
+    '.woff2': 'asset',
+  },
   plugins: [
     {
       name: 'postcss',
       transform: {
         filter: {
-          id: /\.css$/,
+          id: {
+            include: /\.css$/,
+            exclude: /node_modules/,
+          },
         },
         handler(code, id, meta) {
           return postcss([tailwindcss])
@@ -61,13 +67,6 @@ const sharedOptions = {
         },
       },
     },
-    url({
-      include: ['**/*.woff', '**/*.woff2'],
-      limit: 0,
-      emitFiles: true,
-      destDir: r('dist/dev/assets'),
-      fileName: '[hash][extname]',
-    }),
   ],
 }
 

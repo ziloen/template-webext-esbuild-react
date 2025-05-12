@@ -1,1 +1,15 @@
 @import "@ziloen/tailwind-config/preset.css";
+
+
+@layer base {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+  }
+}
