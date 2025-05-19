@@ -87,7 +87,8 @@ function generateManifest() {
   }
 
   if (isCI) {
-    manifest.version_name = manifest.version + `-${commitShortHash}`
+    manifest.version_name =
+      manifest.version + `-${commitShortHash}-${new Date().toISOString()}`
     manifest.name += ' (Nightly)'
 
     // if (isFirefoxEnv) {

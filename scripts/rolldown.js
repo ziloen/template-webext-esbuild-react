@@ -23,7 +23,7 @@ function writeManifest() {
 const sharedOptions = {
   output: {
     dir: outdir,
-    comments: 'preserve-legal',
+    legalComments: 'inline',
   },
   logLevel: isDev ? 'debug' : 'debug',
   platform: 'browser',
