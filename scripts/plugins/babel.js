@@ -56,6 +56,13 @@ const PURE_CALLS = {
   classnames: ['default'],
   uuid: ['v4'],
   'tailwind-merge': ['twMerge', 'extendTailwindMerge'],
+  'zod/v4': [
+    ['z', 'array'],
+    ['z', 'boolean'],
+    ['z', 'number'],
+    ['z', 'object'],
+    ['z', 'string'],
+  ],
 }
 
 /**
