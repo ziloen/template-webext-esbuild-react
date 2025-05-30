@@ -1,5 +1,5 @@
 import tailwindcss from '@tailwindcss/postcss'
-import fs from 'fs-extra'
+import fsExtra from 'fs-extra'
 import { execSync } from 'node:child_process'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
@@ -114,14 +114,14 @@ const buildOptions = [
 ]
 
 async function main() {
-  fs.ensureDirSync(outdir)
-  fs.emptyDirSync(outdir)
+  fsExtra.ensureDirSync(outdir)
+  fsExtra.emptyDirSync(outdir)
   writeManifest()
 
   if (isDev) {
     const watcher = watch(buildOptions)
 
-    fs.watchFile(r('scripts/gen-manifest.ts'), () => {
+    fsExtra.watchFile(r('scripts/gen-manifest.ts'), () => {
       writeManifest()
     })
   } else {
