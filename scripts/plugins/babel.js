@@ -1,6 +1,6 @@
 import { transform } from '@babel/core'
 import { valueToNode } from '@babel/types'
-import fs from 'fs-extra'
+import fs from 'fs/promises'
 import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
