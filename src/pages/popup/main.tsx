@@ -1,5 +1,3 @@
-import '~/styles'
-
 import './main.css'
 
 import { createRoot } from 'react-dom/client'

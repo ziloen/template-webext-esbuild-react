@@ -78,6 +78,7 @@ const buildOptions = [
     ...sharedOptions,
     input: {
       'content-scripts/main': r('src/content-scripts/main.ts'),
+      fonts: r('src/styles/fonts.ts'),
     },
     output: {
       ...sharedOptions.output,
@@ -99,6 +100,7 @@ const buildOptions = [
   {
     ...sharedOptions,
     input: {
+      tailwind: r('src/styles/tailwind.css'),
       'background/main': r('src/background/main.ts'),
       'devtools/main': r('src/devtools/main.ts'),
       'pages/devtools-panel/main': r('src/pages/devtools-panel/main.tsx'),
