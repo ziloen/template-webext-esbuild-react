@@ -14,7 +14,9 @@ const cwd = process.cwd()
 const outdir = r('dist/dev')
 
 function writeManifest() {
-  execSync('tsx ./scripts/gen-manifest.ts', { stdio: 'inherit' })
+  execSync('node --experimental-strip-types ./scripts/gen-manifest.ts', {
+    stdio: 'inherit',
+  })
 }
 
 /**
@@ -25,7 +27,7 @@ const sharedOptions = {
     dir: outdir,
     legalComments: 'inline',
   },
-  logLevel: isDev ? 'debug' : 'debug',
+  logLevel: 'info',
   platform: 'browser',
   resolve: {
     alias: {
@@ -122,6 +124,26 @@ async function main() {
 
   if (isDev) {
     const watcher = watch(buildOptions)
+
+    let time = 0
+    watcher.on('event', (data) => {
+      if (data.code.includes('_')) {
+        return
+      }
+      if (data.code === 'START') {
+        time = performance.now()
+      }
+
+      const buildTime = (performance.now() - time).toFixed(2)
+
+      console.log(
+        `watcher event: ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
+      )
+    })
+
+    watcher.on('change', (e, change) => {
+      console.log(`${change.event}: ${e.slice(cwd.length + 1)}`)
+    })
 
     fsExtra.watchFile(r('scripts/gen-manifest.ts'), () => {
       writeManifest()

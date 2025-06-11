@@ -106,7 +106,9 @@ const contentScriptOptions = {
 }
 
 function writeManifest() {
-  execSync('tsx ./scripts/gen-manifest.ts', { stdio: 'inherit' })
+  execSync('node --experimental-strip-types ./scripts/gen-manifest.ts', {
+    stdio: 'inherit',
+  })
 }
 
 async function main() {

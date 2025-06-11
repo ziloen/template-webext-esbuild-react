@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import type { Manifest } from 'webextension-polyfill'
-import { commitShortHash, isCI, isDev, isFirefoxEnv, r } from './utils'
+import { commitShortHash, isCI, isDev, isFirefoxEnv, r } from './utils.js'
 
 type ChromiumPermissions = 'sidePanel'
 type Permissions =
