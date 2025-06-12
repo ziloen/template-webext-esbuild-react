@@ -28,5 +28,6 @@
     "console"
   ],
   "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.experimental.useTsgo": true,
   "typescript.tsdk": "node_modules\\typescript\\lib"
 }

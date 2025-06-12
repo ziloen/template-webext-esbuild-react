@@ -70,6 +70,9 @@ const sharedOptions = {
       },
     },
   ],
+  experimental: {
+    attachDebugInfo: false,
+  },
 }
 
 /**
@@ -109,6 +112,9 @@ const buildOptions = [
       'pages/options/main': r('src/pages/options/main.tsx'),
       'pages/popup/main': r('src/pages/popup/main.tsx'),
       'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
+    },
+    experimental: {
+      ...sharedOptions.experimental,
     },
     output: {
       ...sharedOptions.output,

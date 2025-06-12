@@ -14,12 +14,12 @@ export default function App() {
           if (!current) return
           if (!current.windowId) return
 
-          sendMessage('open-sidebar', {
+          sendMessage('toggle-sidebar', {
             windowId: current.windowId,
           })
         }}
       >
-        Open Sidebar
+        Toggle Sidebar
       </button>
     </div>
   )
