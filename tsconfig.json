@@ -2,6 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "baseUrl": "./",
+    "outDir": "dist",
     // src/manifest.ts need this
     // https://github.com/microsoft/TypeScript/pull/49886
     "allowJs": true,
@@ -25,7 +26,6 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "stripInternal": true,
-    "noEmit": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

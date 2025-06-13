@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/postcss'
+import chalk from 'chalk'
 import fsExtra from 'fs-extra'
 import { execSync } from 'node:child_process'
 import postcss from 'postcss'
@@ -155,7 +156,41 @@ async function main() {
       writeManifest()
     })
   } else {
-    const result = await build(buildOptions)
+    const results = await build(buildOptions)
+
+    const outputs = results
+      .flatMap((result) => result.output)
+      .sort((a, b) => {
+        const aType = a.type === 'chunk' && a.isEntry ? 'entry' : a.type
+        const bType = b.type === 'chunk' && b.isEntry ? 'entry' : b.type
+        const priority = {
+          entry: 0,
+          chunk: 1,
+          asset: 2,
+        }
+
+        if (aType !== bType) {
+          return priority[aType] - priority[bType]
+        }
+
+        return a.fileName.localeCompare(b.fileName)
+      })
+
+    for (const output of outputs) {
+      const isEntry = output.type === 'chunk' && output.isEntry
+
+      const color =
+        output.type === 'chunk'
+          ? output.isEntry
+            ? chalk.hex('#61afef') // blue
+            : chalk.hex('#98c379') // green
+          : chalk.hex('#d19a66') // orange
+
+      console.log(
+        chalk.gray(isEntry ? 'entry' : output.type),
+        color(output.fileName),
+      )
+    }
   }
 }
 

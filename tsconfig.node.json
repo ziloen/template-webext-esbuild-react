@@ -4,6 +4,8 @@
   ],
   "compilerOptions": {
     "composite": true,
+    "allowJs": true,
+    "checkJs": true,
     "exactOptionalPropertyTypes": false,
     "erasableSyntaxOnly": true,
     "types": [
