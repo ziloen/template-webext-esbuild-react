@@ -72,7 +72,7 @@ const sharedOptions = {
     },
   ],
   experimental: {
-    attachDebugInfo: false,
+    attachDebugInfo: 'none',
   },
 }
 
