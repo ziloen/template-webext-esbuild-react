@@ -27,6 +27,7 @@ const sharedOptions = {
   output: {
     dir: outdir,
     legalComments: 'inline',
+    sourcemap: isDev ? 'inline' : false,
   },
   logLevel: 'info',
   platform: 'browser',
