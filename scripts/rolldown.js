@@ -5,10 +5,10 @@ import { execSync } from 'node:child_process'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
-import { isDev, isFirefoxEnv, r } from './utils.js'
+import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
 
 /**
- * @import { RolldownOptions, BuildOptions } from "rolldown"
+ * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk } from "rolldown"
  */
 
 const cwd = process.cwd()
@@ -177,21 +177,58 @@ async function main() {
         return a.fileName.localeCompare(b.fileName)
       })
 
-    for (const output of outputs) {
-      const isEntry = output.type === 'chunk' && output.isEntry
+    const spaceLength = 2
 
-      const color =
-        output.type === 'chunk'
-          ? output.isEntry
-            ? chalk.hex('#61afef') // blue
-            : chalk.hex('#98c379') // green
-          : chalk.hex('#d19a66') // orange
+    const filenameLength =
+      Math.max(...outputs.map((output) => output.fileName.length)) + spaceLength
+
+    const sizes = outputs.map((output) => calcSize(output))
+
+    const sizeTextLength = Math.max(...sizes.map((size) => size.rawText.length))
+
+    let totalSize = 0
+    for (const size of sizes) {
+      size.rawText = size.rawText.padStart(sizeTextLength)
+      totalSize += size.raw
+    }
+
+    for (const size of sizes) {
+      const isEntry = size.isEntry
+
+      const color = isEntry ? chalk.hex('#61afef') : chalk.hex('#98c379')
 
       console.log(
-        chalk.gray(isEntry ? 'entry' : output.type),
-        color(output.fileName),
+        chalk.gray(isEntry ? 'entry' : 'chunk'),
+        color(size.fileName) +
+          ` `.padEnd(filenameLength - size.fileName.length),
+        chalk.white(size.rawText),
       )
     }
+
+    const totalText = formatBytes(totalSize)
+
+    console.log(
+      chalk.gray('total'),
+      ' '.repeat(filenameLength - (totalText.length - sizeTextLength)),
+      chalk.white(totalText),
+    )
+  }
+}
+
+/**
+ *
+ * @param {OutputAsset | OutputChunk} chunk
+ */
+function calcSize(chunk) {
+  const content = chunk.type === 'chunk' ? chunk.code : chunk.source
+
+  const raw = Buffer.byteLength(content, 'utf-8')
+
+  return {
+    raw: raw,
+    rawText: formatBytes(raw),
+    fileName: chunk.fileName,
+    isEntry: chunk.type === 'chunk' && chunk.isEntry,
   }
 }
 
