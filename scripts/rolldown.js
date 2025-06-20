@@ -1,11 +1,15 @@
+import { babel } from '@rollup/plugin-babel'
 import tailwindcss from '@tailwindcss/postcss'
 import chalk from 'chalk'
 import fsExtra from 'fs-extra'
 import { execSync } from 'node:child_process'
+import { createRequire } from 'node:module'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
+
+const _require = createRequire(import.meta.url)
 
 /**
  * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk } from "rolldown"
@@ -13,6 +17,7 @@ import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
 
 const cwd = process.cwd()
 const outdir = r('dist/dev')
+const target = '> 0.5%, last 2 versions, Firefox ESR, not dead'
 
 function writeManifest() {
   execSync('node --experimental-strip-types ./scripts/gen-manifest.ts', {
@@ -71,6 +76,32 @@ const sharedOptions = {
         },
       },
     },
+    babel({
+      babelHelpers: 'bundled',
+      presets: [
+        [
+          '@babel/preset-env',
+          {
+            corejs: {
+              version: _require('core-js/package.json').version,
+              proposals: false,
+            },
+            useBuiltIns: 'usage',
+            shippedProposals: true,
+            ignoreBrowserslistConfig: true,
+            targets: target,
+            bugfixes: true,
+            loose: false,
+            modules: false,
+          },
+        ],
+        ['@babel/preset-react', { runtime: 'automatic' }],
+        '@babel/preset-typescript',
+      ],
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      exclude: /node_modules/,
+      skipPreflightCheck: true,
+    }),
   ],
   experimental: {
     attachDebugInfo: 'none',
