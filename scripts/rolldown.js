@@ -7,6 +7,7 @@ import { createRequire } from 'node:module'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
+import Sonda from 'sonda/rolldown'
 import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
 
 const _require = createRequire(import.meta.url)
@@ -53,6 +54,7 @@ const sharedOptions = {
     '.woff2': 'asset',
   },
   plugins: [
+    // Sonda(),
     {
       name: 'postcss',
       transform: {
