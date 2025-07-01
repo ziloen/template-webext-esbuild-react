@@ -48,7 +48,7 @@
     "@typescript/native-preview": "7.0.0-dev.20250630.1",
     "@ziloen/eslint-config": "0.1.64",
     "@ziloen/tailwind-config": "2.0.6",
-    "babel-plugin-annotate-module-pure": "1.0.2",
+    "babel-plugin-annotate-module-pure": "1.0.3",
     "chalk": "5.4.1",
     "chokidar": "4.0.3",
     "core-js": "3.43.0",
