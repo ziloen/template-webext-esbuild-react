@@ -36,7 +36,7 @@ function generateManifest() {
     description: '__MSG_extensionDescription__',
     default_locale: 'en',
     background: isFirefoxEnv
-      ? { scripts: ['./background/mian.js'], type: 'module' }
+      ? { scripts: ['./background/main.js'], type: 'module' }
       : { service_worker: './background/main.js', type: 'module' },
     permissions: ['sidePanel'],
     optional_permissions: [],
