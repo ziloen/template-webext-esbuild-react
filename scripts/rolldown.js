@@ -35,6 +35,9 @@ const sharedOptions = {
     legalComments: 'inline',
     sourcemap: isDev ? 'inline' : false,
   },
+  optimization: {
+    inlineConst: !isDev,
+  },
   logLevel: 'info',
   platform: 'browser',
   resolve: {
