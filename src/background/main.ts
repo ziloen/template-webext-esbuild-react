@@ -2,6 +2,10 @@ import { onMessage, sendMessage } from 'typed-webext'
 import Browser from 'webextension-polyfill'
 import { getActiveTab } from '~/utils'
 
+if (IS_FIREFOX_ENV) {
+  import('./grant-all-url-permission')
+}
+
 Browser.runtime.onConnect.addListener(() => {
   console.log('Hello from the background script!')
 })

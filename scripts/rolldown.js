@@ -38,6 +38,9 @@ const sharedOptions = {
   optimization: {
     inlineConst: !isDev,
   },
+  define: {
+    IS_FIREFOX_ENV: JSON.stringify(isFirefoxEnv),
+  },
   logLevel: 'info',
   platform: 'browser',
   resolve: {

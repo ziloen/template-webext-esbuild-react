@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development node scripts/rolldown.js",
+    "dev:firefox": "cross-env NODE_ENV=development EXTENSION=firefox node scripts/rolldown.js",
     "build": "cross-env NODE_ENV=production node scripts/rolldown.js && web-ext build -n chrome.zip",
     "build:firefox": "cross-env NODE_ENV=production EXTENSION=firefox node scripts/rolldown.js && web-ext build -n firefox.xpi",
     "start:chromium": "web-ext run -t chromium",
