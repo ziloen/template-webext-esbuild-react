@@ -90,14 +90,14 @@ const sharedOptions = {
         [
           '@babel/preset-env',
           {
+            targets: target,
+            useBuiltIns: 'usage',
             corejs: {
               version: _require('core-js/package.json').version,
               proposals: false,
             },
-            useBuiltIns: 'usage',
             shippedProposals: true,
             ignoreBrowserslistConfig: true,
-            targets: target,
             bugfixes: true,
             loose: false,
             modules: false,
