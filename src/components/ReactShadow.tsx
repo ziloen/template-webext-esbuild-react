@@ -5,7 +5,6 @@ import Browser from 'webextension-polyfill'
 export function ReactShadow({ children }: { children?: React.ReactNode }) {
   const [shadowRoot, setShadowRoot] = useState<ShadowRoot | null>(null)
   const [tailwindLoading, setTailwindLoading] = useState(true)
-  const [fontsLoading, setFontsLoading] = useState(true)
 
   const init = useCallback<RefCallback<HTMLDivElement>>((el) => {
     if (el) {
@@ -23,20 +22,12 @@ export function ReactShadow({ children }: { children?: React.ReactNode }) {
           <>
             <link
               rel="stylesheet"
-              as="style"
               href={Browser.runtime.getURL('tailwind.css')}
               onLoad={(e) => {
                 setTailwindLoading(false)
               }}
             />
-            <link
-              rel="stylesheet"
-              href={Browser.runtime.getURL('fonts.css')}
-              onLoad={() => {
-                setFontsLoading(false)
-              }}
-            />
-            {!tailwindLoading && !fontsLoading && children}
+            {!tailwindLoading && children}
           </>,
           shadowRoot,
         )}
