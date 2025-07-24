@@ -19,6 +19,9 @@ const _require = createRequire(import.meta.url)
 const cwd = process.cwd()
 const outdir = r('dist/dev')
 const target = '> 0.5%, last 2 versions, Firefox ESR, not dead'
+const extensionProtocol = isFirefoxEnv
+  ? 'moz-extension://'
+  : 'chrome-extension://'
 
 function writeManifest() {
   execSync('node --experimental-strip-types ./scripts/gen-manifest.ts', {
@@ -34,27 +37,27 @@ const sharedOptions = {
     dir: outdir,
     legalComments: 'inline',
     sourcemap: isDev ? 'inline' : false,
+    hashCharacters: 'hex',
+    assetFileNames: 'assets/[name].[hash][extname]',
+    chunkFileNames: '[name].[hash].js',
   },
   optimization: {
     inlineConst: !isDev,
   },
   define: {
     IS_FIREFOX_ENV: JSON.stringify(isFirefoxEnv),
+    IS_DEV: JSON.stringify(isDev),
+    IS_PROD: JSON.stringify(!isDev),
   },
   logLevel: 'info',
   platform: 'browser',
   resolve: {
     alias: {
       '~': r('src'),
-      '~ext-root': isFirefoxEnv
-        ? 'moz-extension://__MSG_@@extension_id__'
-        : 'chrome-extension://__MSG_@@extension_id__',
+      '~ext-root': `${extensionProtocol}__MSG_@@extension_id__`,
     },
   },
-  external: [
-    'chrome-extension://__MSG_@@extension_id__/*',
-    'moz-extension://__MSG_@@extension_id__/*',
-  ],
+  external: [`${extensionProtocol}__MSG_@@extension_id__/*`],
   moduleTypes: {
     '.woff': 'asset',
     '.woff2': 'asset',
@@ -81,6 +84,36 @@ const sharedOptions = {
               code: result.css,
               map: { mappings: '' },
             }))
+        },
+      },
+    },
+    {
+      name: 'add-prefix-to-assets-url',
+      generateBundle: {
+        handler(outputOptions, bundle, isWrite) {
+          for (const [fileName, chunk] of Object.entries(bundle)) {
+            if (fileName.endsWith('.css')) {
+              const code =
+                chunk.type === 'chunk'
+                  ? chunk.code
+                  : /** @type {string} */ (chunk.source)
+
+              if (/(url\(\s*['"]?)([^"')]+)(["']?\s*\))/g.test(code)) {
+                const newCode = code.replaceAll(
+                  /(url\(\s*['"]?)([^"')]+)(["']?\s*\))/g,
+                  (match, before, url, after) => {
+                    return `${before}${extensionProtocol}__MSG_@@extension_id__/${url}${after}`
+                  },
+                )
+
+                if (chunk.type === 'chunk') {
+                  chunk.code = newCode
+                } else {
+                  chunk.source = newCode
+                }
+              }
+            }
+          }
         },
       },
     },
@@ -123,7 +156,7 @@ const buildOptions = [
   {
     ...sharedOptions,
     input: {
-      'content-scripts/main': r('src/content-scripts/main.ts'),
+      'content-scripts/main': r('src/content-scripts/main.tsx'),
     },
     output: {
       ...sharedOptions.output,
