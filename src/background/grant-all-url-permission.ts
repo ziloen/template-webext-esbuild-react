@@ -1,15 +1,23 @@
 import Browser from 'webextension-polyfill'
 
 function removePopup() {
-  Browser.action.setPopup({ popup: '' })
+  return Browser.action.setPopup({ popup: '' })
 }
 
 function setPopup() {
-  Browser.action.setPopup({ popup: './pages/popup/index.html' })
+  return Browser.action.setPopup({ popup: './pages/popup/index.html' })
 }
 
+Browser.runtime.onInstalled.addListener(() => {
+  Browser.permissions.contains({ origins: ['<all_urls>'] }).then((val) => {
+    if (!val) {
+      removePopup()
+    }
+  })
+})
+
 let permissionRequesting: Promise<any> | null = null
-Browser.action.onClicked.addListener(() => {
+Browser.action.onClicked.addListener((tab, info) => {
   if (permissionRequesting) return
   permissionRequesting = Browser.permissions
     .request({ origins: ['<all_urls>'] })

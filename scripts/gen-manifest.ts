@@ -41,10 +41,8 @@ function generateManifest() {
     permissions: ['sidePanel'],
     optional_permissions: [],
 
-    action: isFirefoxEnv
-      ? { default_area: 'navbar' }
-      : { default_popup: './pages/popup/index.html' },
-    devtools_page: './devtools/index.html',
+    action: { default_popup: './pages/popup/index.html' },
+    // devtools_page: './devtools/index.html',
     options_ui: {
       page: './pages/options/index.html',
       open_in_tab: true,
