@@ -39,7 +39,7 @@ const sharedOptions = {
     sourcemap: isDev ? 'inline' : false,
     hashCharacters: 'hex',
     assetFileNames: 'assets/[name].[hash][extname]',
-    chunkFileNames: '[name].[hash].js',
+    chunkFileNames: 'assets/[name].[hash].js',
   },
   optimization: {
     inlineConst: !isDev,
@@ -217,7 +217,7 @@ async function main() {
       const buildTime = (performance.now() - time).toFixed(2)
 
       console.log(
-        `watcher event: ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
+        `watcher: ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
       )
     })
 
@@ -288,7 +288,6 @@ async function main() {
 }
 
 /**
- *
  * @param {OutputAsset | OutputChunk} chunk
  */
 function calcSize(chunk) {
@@ -297,7 +296,7 @@ function calcSize(chunk) {
   const raw = Buffer.byteLength(content, 'utf-8')
 
   return {
-    raw: raw,
+    raw,
     rawText: formatBytes(raw),
     fileName: chunk.fileName,
     isEntry: chunk.type === 'chunk' && chunk.isEntry,
