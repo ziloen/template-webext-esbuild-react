@@ -146,6 +146,8 @@ const sharedOptions = {
         },
       },
     },
+
+    // FIXME: use filter to exclude node_modules
     babel({
       babelHelpers: 'bundled',
       presets: [

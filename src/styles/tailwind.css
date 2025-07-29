@@ -27,7 +27,7 @@
 
   /* 清除外部可继承属性（例如 text-align）的影响 */
   :host {
-    all: revert;
+    all: initial;
     font-family: --theme(--font-noto-sans-sc);
   }
 
