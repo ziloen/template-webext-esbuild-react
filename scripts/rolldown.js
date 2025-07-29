@@ -14,6 +14,7 @@ const _require = createRequire(import.meta.url)
 
 /**
  * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk } from "rolldown"
+ * @import { TransformCallback } from "postcss"
  */
 
 const cwd = process.cwd()
@@ -26,6 +27,27 @@ const extensionProtocol = isFirefoxEnv
 function writeManifest() {
   execSync('node --experimental-strip-types ./scripts/gen-manifest.ts', {
     stdio: 'inherit',
+  })
+}
+
+const globalRulesRoot = postcss.root()
+
+/**
+ * 将需要定义在全局的 CSS 规则提取到单独的文件中。
+ * 例如 `@property`, `@font-face` 规则
+ *
+ * @type {TransformCallback}
+ */
+const postcssExtractGlobalRules = (root) => {
+  root.each((node) => {
+    if (node.type !== 'atrule') {
+      return
+    }
+
+    if (node.name === 'property') {
+      node.remove()
+      globalRulesRoot.append(node.clone())
+    }
   })
 }
 
@@ -74,7 +96,7 @@ const sharedOptions = {
           },
         },
         handler(code, id, meta) {
-          return postcss([tailwindcss])
+          return postcss([tailwindcss, postcssExtractGlobalRules])
             .process(code, {
               from: id,
               to: id,
@@ -91,6 +113,7 @@ const sharedOptions = {
       name: 'add-prefix-to-assets-url',
       generateBundle: {
         handler(outputOptions, bundle, isWrite) {
+          // TODO: move this to the postcss plugin
           for (const [fileName, chunk] of Object.entries(bundle)) {
             if (fileName.endsWith('.css')) {
               const code =
@@ -114,6 +137,12 @@ const sharedOptions = {
               }
             }
           }
+
+          this.emitFile({
+            type: 'asset',
+            fileName: 'properties.css',
+            source: globalRulesRoot.toResult().css,
+          })
         },
       },
     },
@@ -210,6 +239,12 @@ async function main() {
       if (data.code.includes('_')) {
         return
       }
+
+      if (data.code === 'ERROR') {
+        console.error('watcher:', data.error)
+        return
+      }
+
       if (data.code === 'START') {
         time = performance.now()
       }

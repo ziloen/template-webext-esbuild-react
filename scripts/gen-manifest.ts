@@ -54,7 +54,7 @@ function generateManifest() {
       {
         matches: ['<all_urls>'],
         js: ['./content-scripts/main.js'],
-        css: ['fonts.css'],
+        css: ['fonts.css', 'properties.css'],
         run_at: 'document_end',
       },
     ],
