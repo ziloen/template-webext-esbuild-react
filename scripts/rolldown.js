@@ -44,6 +44,7 @@ const postcssExtractGlobalRules = (root) => {
       return
     }
 
+    // TODO: node.name === 'font-face'
     if (node.name === 'property') {
       node.remove()
       globalRulesRoot.append(node.clone())
@@ -113,28 +114,30 @@ const sharedOptions = {
       name: 'add-prefix-to-assets-url',
       generateBundle: {
         handler(outputOptions, bundle, isWrite) {
+          const urlPattern = /(url\(\s*['"]?)([^"')]+)(["']?\s*\))/g
+
           // TODO: move this to the postcss plugin
           for (const [fileName, chunk] of Object.entries(bundle)) {
-            if (fileName.endsWith('.css')) {
-              const code =
-                chunk.type === 'chunk'
-                  ? chunk.code
-                  : /** @type {string} */ (chunk.source)
+            if (!fileName.endsWith('.css')) continue
 
-              if (/(url\(\s*['"]?)([^"')]+)(["']?\s*\))/g.test(code)) {
-                const newCode = code.replaceAll(
-                  /(url\(\s*['"]?)([^"')]+)(["']?\s*\))/g,
-                  (match, before, url, after) => {
-                    return `${before}${extensionProtocol}__MSG_@@extension_id__/${url}${after}`
-                  },
-                )
+            const code =
+              chunk.type === 'chunk'
+                ? chunk.code
+                : /** @type {string} */ (chunk.source)
 
-                if (chunk.type === 'chunk') {
-                  chunk.code = newCode
-                } else {
-                  chunk.source = newCode
-                }
-              }
+            if (!urlPattern.test(code)) continue
+
+            const newCode = code.replaceAll(
+              urlPattern,
+              (match, before, url, after) => {
+                return `${before}${extensionProtocol}__MSG_@@extension_id__/${url}${after}`
+              },
+            )
+
+            if (chunk.type === 'chunk') {
+              chunk.code = newCode
+            } else {
+              chunk.source = newCode
             }
           }
 
@@ -150,6 +153,9 @@ const sharedOptions = {
     // FIXME: use filter to exclude node_modules
     babel({
       babelHelpers: 'bundled',
+      parserOpts: {
+        plugins: ['jsx', 'typescript'],
+      },
       presets: [
         [
           '@babel/preset-env',
@@ -167,8 +173,6 @@ const sharedOptions = {
             modules: false,
           },
         ],
-        ['@babel/preset-react', { runtime: 'automatic' }],
-        '@babel/preset-typescript',
       ],
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       exclude: /node_modules/,
