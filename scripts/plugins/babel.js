@@ -56,7 +56,7 @@ const PURE_CALLS = {
   classnames: ['default'],
   uuid: ['v4'],
   'tailwind-merge': ['twMerge', 'extendTailwindMerge'],
-  'zod/v4': [
+  zod: [
     ['z', 'array'],
     ['z', 'boolean'],
     ['z', 'number'],
@@ -167,4 +167,5 @@ export const pure = [
   'Object.hasOwn',
   'Object.keys',
   'Object.values',
+  'structuredClone',
 ]
