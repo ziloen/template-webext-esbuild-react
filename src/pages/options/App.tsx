@@ -14,7 +14,7 @@ export default function App() {
           if (!current) return
           if (!current.windowId) return
 
-          sendMessage('toggle-sidebar', {
+          sendMessage.toggle_sidebar({
             windowId: current.windowId,
           })
         }}

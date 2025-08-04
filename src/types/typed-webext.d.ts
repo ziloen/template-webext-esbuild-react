@@ -3,9 +3,9 @@ import 'typed-webext'
 declare module 'typed-webext' {
   interface MessageProtocol<T = unknown> {
     example: [never, never]
-    'open-sidebar': [options: { windowId?: number } | undefined, never]
-    'toggle-sidebar': [options: { windowId?: number } | undefined, never]
-    'to-sidepanel:close-sidepanel': [never, never]
+    open_sidebar: [options: { windowId?: number } | undefined, never]
+    toggle_sidebar: [options: { windowId?: number } | undefined, never]
+    to_sidepanel_close_sidepanel: [never, never]
   }
 
   interface StreamProtocol {}

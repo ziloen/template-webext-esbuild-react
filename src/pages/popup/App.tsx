@@ -18,7 +18,7 @@ export default function App() {
 
       <button
         onClick={() => {
-          sendMessage('open-sidebar', undefined)
+          sendMessage.open_sidebar(undefined)
         }}
       >
         Open Sidebar

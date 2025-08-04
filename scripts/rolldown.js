@@ -39,16 +39,9 @@ const globalRulesRoot = postcss.root()
  * @type {TransformCallback}
  */
 const postcssExtractGlobalRules = (root) => {
-  root.each((node) => {
-    if (node.type !== 'atrule') {
-      return
-    }
-
-    // TODO: node.name === 'font-face'
-    if (node.name === 'property') {
-      node.remove()
-      globalRulesRoot.append(node.clone())
-    }
+  root.walkAtRules('property', (atRule) => {
+    atRule.remove()
+    globalRulesRoot.append(atRule.clone())
   })
 }
 
@@ -114,9 +107,6 @@ const sharedOptions = {
       name: 'add-prefix-to-assets-url',
       generateBundle: {
         handler(outputOptions, bundle, isWrite) {
-          const urlPattern = /(url\(\s*['"]?)([^"')]+)(["']?\s*\))/g
-
-          // TODO: move this to the postcss plugin
           for (const [fileName, chunk] of Object.entries(bundle)) {
             if (!fileName.endsWith('.css')) continue
 
@@ -125,14 +115,17 @@ const sharedOptions = {
                 ? chunk.code
                 : /** @type {string} */ (chunk.source)
 
-            if (!urlPattern.test(code)) continue
+            const result = postcss.parse(code)
 
-            const newCode = code.replaceAll(
-              urlPattern,
-              (match, before, url, after) => {
-                return `${before}${extensionProtocol}__MSG_@@extension_id__/${url}${after}`
-              },
-            )
+            result.walkDecls('src', (decl, index) => {
+              if (decl.value.startsWith('url(assets/')) {
+                decl.value =
+                  `url(${extensionProtocol}__MSG_@@extension_id__/` +
+                  decl.value.slice(4)
+              }
+            })
+
+            const newCode = result.toResult().css
 
             if (chunk.type === 'chunk') {
               chunk.code = newCode
@@ -319,6 +312,9 @@ async function main() {
     }
 
     const totalText = formatBytes(totalSize)
+
+    // Horizontal rule
+    console.log('-'.repeat(filenameLength + sizeTextLength + 7))
 
     console.log(
       chalk.gray('total'),

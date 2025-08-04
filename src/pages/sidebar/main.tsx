@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { onMessage } from 'typed-webext'
 import App from './App'
 
-onMessage('to-sidepanel:close-sidepanel', () => {
+onMessage.to_sidepanel_close_sidepanel(() => {
   // FIXME: 如果在 sidepanel 完全关闭前再次打开（快速 toggle），window.close 会不再起作用
   window.close()
 })

@@ -10,11 +10,11 @@ Browser.runtime.onConnect.addListener(() => {
   console.log('Hello from the background script!')
 })
 
-onMessage('example', ({ data, sender }) => {
+onMessage.example(({ data, sender }) => {
   console.log('sender', sender)
 })
 
-onMessage('open-sidebar', async ({ data = {}, sender }) => {
+onMessage.open_sidebar(async ({ data = {}, sender }) => {
   if (Browser.sidebarAction) {
     return Browser.sidebarAction.open()
   }
@@ -37,7 +37,7 @@ onMessage('open-sidebar', async ({ data = {}, sender }) => {
   })
 })
 
-onMessage('toggle-sidebar', async ({ data = {}, sender }) => {
+onMessage.toggle_sidebar(async ({ data = {}, sender }) => {
   if (Browser.sidebarAction) {
     return Browser.sidebarAction.toggle()
   }
@@ -56,5 +56,5 @@ onMessage('toggle-sidebar', async ({ data = {}, sender }) => {
   }
 
   const openPromise = Browser.sidePanel.open({ windowId })
-  return sendMessage('to-sidepanel:close-sidepanel').catch(() => openPromise)
+  return sendMessage.to_sidepanel_close_sidepanel().catch(() => openPromise)
 })
