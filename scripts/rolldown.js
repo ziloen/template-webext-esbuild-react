@@ -7,7 +7,7 @@ import { createRequire } from 'node:module'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
-import Sonda from 'sonda/rolldown'
+import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
 import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
 
 const _require = createRequire(import.meta.url)
@@ -66,6 +66,15 @@ const sharedOptions = {
     IS_PROD: JSON.stringify(!isDev),
   },
   logLevel: 'info',
+  treeshake: {
+    manualPureFunctions: pureFunctions,
+    moduleSideEffects: [
+      {
+        test: /node_modules[\\/]react/,
+        sideEffects: false,
+      },
+    ],
+  },
   platform: 'browser',
   resolve: {
     alias: {
@@ -164,6 +173,14 @@ const sharedOptions = {
             bugfixes: true,
             loose: false,
             modules: false,
+          },
+        ],
+      ],
+      plugins: [
+        [
+          'babel-plugin-annotate-module-pure',
+          {
+            pureCalls: PURE_CALLS,
           },
         ],
       ],

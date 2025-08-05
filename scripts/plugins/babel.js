@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url)
  */
 
 /** @type {import("babel-plugin-annotate-module-pure").Options["pureCalls"]} */
-const PURE_CALLS = {
+export const PURE_CALLS = {
   react: [
     'cloneElement',
     'createContext',
@@ -142,7 +142,7 @@ export function BabelPlugin() {
   }
 }
 
-export const pure = [
+export const pureFunctions = [
   'Array.from',
   'Array.isArray',
   'crypto.randomUUID',

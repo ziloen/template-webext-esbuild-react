@@ -4,7 +4,7 @@ import { copy as CopyPlugin } from 'esbuild-plugin-copy'
 import stylePlugin from 'esbuild-style-plugin'
 import fs from 'fs-extra'
 import { execSync } from 'node:child_process'
-import { BabelPlugin, pure } from './plugins/babel.js'
+import { BabelPlugin, pureFunctions } from './plugins/babel.js'
 import { isDev, isFirefoxEnv, r } from './utils.js'
 
 /**
@@ -51,7 +51,7 @@ const sharedOptions = {
     '.woff': 'file',
     '.woff2': 'file',
   },
-  pure: pure,
+  pure: pureFunctions,
   logLevel: 'info',
   color: true,
   plugins: [
