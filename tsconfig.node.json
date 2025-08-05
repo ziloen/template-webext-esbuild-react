@@ -18,9 +18,4 @@
     "scripts",
     "tests",
   ],
-  "references": [
-    {
-      "path": "./tsconfig.json"
-    }
-  ]
 }
