@@ -33,19 +33,6 @@ function writeManifest() {
 const globalRulesRoot = postcss.root()
 
 /**
- * 将需要定义在全局的 CSS 规则提取到单独的文件中。
- * 例如 `@property`, `@font-face` 规则
- *
- * @type {TransformCallback}
- */
-const postcssExtractGlobalRules = (root) => {
-  root.walkAtRules('property', (atRule) => {
-    atRule.remove()
-    globalRulesRoot.append(atRule.clone())
-  })
-}
-
-/**
  * @satisfies {RolldownOptions}
  */
 const sharedOptions = {
@@ -70,7 +57,7 @@ const sharedOptions = {
     manualPureFunctions: pureFunctions,
     moduleSideEffects: [
       {
-        test: /node_modules[\\/]react/,
+        test: /node_modules[\\/]react[\\/]/,
         sideEffects: false,
       },
     ],
@@ -98,8 +85,10 @@ const sharedOptions = {
             exclude: /node_modules/,
           },
         },
+        order: 'post',
         handler(code, id, meta) {
-          return postcss([tailwindcss, postcssExtractGlobalRules])
+          // FIXME: tailwind 运行了两次？
+          return postcss([tailwindcss])
             .process(code, {
               from: id,
               to: id,
@@ -134,6 +123,11 @@ const sharedOptions = {
               }
             })
 
+            result.walkAtRules(/^(?:property|font-face)$/, (atRule) => {
+              atRule.remove()
+              globalRulesRoot.append(atRule.clone())
+            })
+
             const newCode = result.toResult().css
 
             if (chunk.type === 'chunk') {
@@ -142,12 +136,6 @@ const sharedOptions = {
               chunk.source = newCode
             }
           }
-
-          this.emitFile({
-            type: 'asset',
-            fileName: 'properties.css',
-            source: globalRulesRoot.toResult().css,
-          })
         },
       },
     },
@@ -207,18 +195,6 @@ const buildOptions = [
       ...sharedOptions.output,
       format: 'iife',
     },
-    plugins: [
-      ...sharedOptions.plugins,
-      copy({
-        cwd: cwd,
-        flatten: false,
-        targets: [
-          { src: 'public/**/*', dest: 'dist/dev' },
-          { src: 'src/pages/**/*.html', dest: 'dist/dev' },
-          { src: 'src/devtools/index.html', dest: 'dist/dev' },
-        ],
-      }),
-    ],
   },
   {
     ...sharedOptions,
@@ -232,6 +208,36 @@ const buildOptions = [
       'pages/popup/main': r('src/pages/popup/main.tsx'),
       'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
     },
+    plugins: [
+      ...sharedOptions.plugins,
+      copy({
+        cwd: cwd,
+        flatten: false,
+        targets: [
+          { src: 'public/**/*', dest: 'dist/dev' },
+          { src: 'src/pages/**/*.html', dest: 'dist/dev' },
+          { src: 'src/devtools/index.html', dest: 'dist/dev' },
+        ],
+      }),
+      {
+        name: 'emit-global-rules',
+        generateBundle: {
+          handler(outputOptions, bundle, isWrite) {
+            // Remove unused assets
+            delete bundle['fonts.css']
+            delete bundle['fonts.js']
+            delete bundle['tailwind.js']
+
+            this.emitFile({
+              type: 'asset',
+              fileName: 'global-rules.css',
+              source: globalRulesRoot.toResult().css,
+            })
+          },
+        },
+      },
+    ],
+
     experimental: {
       ...sharedOptions.experimental,
     },

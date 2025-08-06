@@ -54,13 +54,13 @@ function generateManifest() {
       {
         matches: ['<all_urls>'],
         js: ['./content-scripts/main.js'],
-        css: ['fonts.css', 'properties.css'],
+        css: ['global-rules.css'],
         run_at: 'document_end',
       },
     ],
     web_accessible_resources: [
       {
-        resources: ['assets/*', 'tailwind.css', 'fonts.css'],
+        resources: ['assets/*', 'tailwind.css', 'global-rules.css'],
         matches: ['<all_urls>'],
       },
     ],
