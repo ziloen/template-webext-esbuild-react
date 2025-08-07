@@ -25,7 +25,7 @@ const extensionProtocol = isFirefoxEnv
   : 'chrome-extension://'
 
 function writeManifest() {
-  execSync('node --experimental-strip-types ./scripts/gen-manifest.ts', {
+  execSync('node ./scripts/gen-manifest.ts', {
     stdio: 'inherit',
   })
 }
