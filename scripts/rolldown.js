@@ -2,7 +2,7 @@ import { babel } from '@rollup/plugin-babel'
 import tailwindcss from '@tailwindcss/postcss'
 import chalk from 'chalk'
 import fsExtra from 'fs-extra'
-import { execSync } from 'node:child_process'
+import { exec } from 'node:child_process'
 import { createRequire } from 'node:module'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
@@ -10,10 +10,8 @@ import copy from 'rollup-plugin-copy'
 import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
 import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
 
-const _require = createRequire(import.meta.url)
-
 /**
- * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk } from "rolldown"
+ * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk, RolldownOutput } from "rolldown"
  * @import { TransformCallback } from "postcss"
  */
 
@@ -24,13 +22,8 @@ const extensionProtocol = isFirefoxEnv
   ? 'moz-extension://'
   : 'chrome-extension://'
 
-function writeManifest() {
-  execSync('node ./scripts/gen-manifest.ts', {
-    stdio: 'inherit',
-  })
-}
-
 const globalRulesRoot = postcss.root()
+const _require = createRequire(import.meta.url)
 
 /**
  * @satisfies {RolldownOptions}
@@ -77,7 +70,7 @@ const sharedOptions = {
   plugins: [
     // Sonda(),
     {
-      name: 'postcss',
+      name: 'process-css',
       transform: {
         filter: {
           id: {
@@ -100,9 +93,6 @@ const sharedOptions = {
             }))
         },
       },
-    },
-    {
-      name: 'add-prefix-to-assets-url',
       generateBundle: {
         handler(outputOptions, bundle, isWrite) {
           for (const [fileName, chunk] of Object.entries(bundle)) {
@@ -115,6 +105,7 @@ const sharedOptions = {
 
             const result = postcss.parse(code)
 
+            // Add prefix to all URLs in src attributes
             result.walkDecls('src', (decl, index) => {
               if (decl.value.startsWith('url(assets/')) {
                 decl.value =
@@ -248,119 +239,120 @@ const buildOptions = [
   },
 ]
 
-async function main() {
-  fsExtra.ensureDirSync(outdir)
-  fsExtra.emptyDirSync(outdir)
-  writeManifest()
-
-  if (isDev) {
-    const watcher = watch(buildOptions)
-
-    let time = 0
-    watcher.on('event', (data) => {
-      if (data.code.includes('_')) {
-        return
-      }
-
-      if (data.code === 'ERROR') {
-        console.error('watcher:', data.error)
-        return
-      }
-
-      if (data.code === 'START') {
-        time = performance.now()
-      }
-
-      const buildTime = (performance.now() - time).toFixed(2)
-
-      console.log(
-        `watcher: ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
-      )
-    })
-
-    watcher.on('change', (e, change) => {
-      console.log(`${change.event}: ${e.slice(cwd.length + 1)}`)
-    })
-
-    fsExtra.watchFile(r('scripts/gen-manifest.ts'), () => {
-      writeManifest()
-    })
-  } else {
-    const results = await build(buildOptions)
-
-    const outputs = results
-      .flatMap((result) => result.output)
-      .sort((a, b) => {
-        const aType = a.type === 'chunk' && a.isEntry ? 'entry' : a.type
-        const bType = b.type === 'chunk' && b.isEntry ? 'entry' : b.type
-        const priority = {
-          entry: 0,
-          chunk: 1,
-          asset: 2,
-        }
-
-        if (aType !== bType) {
-          return priority[aType] - priority[bType]
-        }
-
-        return a.fileName.localeCompare(b.fileName)
-      })
-
-    const spaceLength = 2
-
-    const filenameLength =
-      Math.max(...outputs.map((output) => output.fileName.length)) + spaceLength
-
-    const sizes = outputs.map((output) => calcSize(output))
-
-    const sizeTextLength = Math.max(...sizes.map((size) => size.rawText.length))
-
-    let totalSize = 0
-    for (const size of sizes) {
-      size.rawText = size.rawText.padStart(sizeTextLength)
-      totalSize += size.raw
-    }
-
-    for (const size of sizes) {
-      const isEntry = size.isEntry
-
-      const color = isEntry ? chalk.hex('#61afef') : chalk.hex('#98c379')
-
-      console.log(
-        chalk.gray(isEntry ? 'entry' : 'chunk'),
-        color(size.fileName) +
-          ` `.padEnd(filenameLength - size.fileName.length),
-        chalk.white(size.rawText),
-      )
-    }
-
-    const totalText = formatBytes(totalSize)
-
-    // Horizontal rule
-    console.log('-'.repeat(filenameLength + sizeTextLength + 7))
-
-    console.log(
-      chalk.gray('total'),
-      ' '.repeat(filenameLength - (totalText.length - sizeTextLength)),
-      chalk.white(totalText),
-    )
-  }
+function writeManifest() {
+  exec('node ./scripts/gen-manifest.ts')
 }
 
 /**
- * @param {OutputAsset | OutputChunk} chunk
+ * @param {RolldownOutput[]} results
  */
-function calcSize(chunk) {
-  const content = chunk.type === 'chunk' ? chunk.code : chunk.source
+function logBuildResult(results) {
+  const outputs = results
+    .flatMap((result) => result.output)
+    .sort((a, b) => {
+      const aType = a.type === 'chunk' && a.isEntry ? 'entry' : a.type
+      const bType = b.type === 'chunk' && b.isEntry ? 'entry' : b.type
+      const priority = {
+        entry: 0,
+        chunk: 1,
+        asset: 2,
+      }
 
-  const raw = Buffer.byteLength(content, 'utf-8')
+      if (aType !== bType) {
+        return priority[aType] - priority[bType]
+      }
 
-  return {
-    raw,
-    rawText: formatBytes(raw),
-    fileName: chunk.fileName,
-    isEntry: chunk.type === 'chunk' && chunk.isEntry,
+      return a.fileName.localeCompare(b.fileName)
+    })
+
+  const spaceLength = 2
+
+  const filenameLength =
+    Math.max(...outputs.map((output) => output.fileName.length)) + spaceLength
+
+  const sizes = outputs.map((chunk) => {
+    const content = chunk.type === 'chunk' ? chunk.code : chunk.source
+
+    const raw = Buffer.byteLength(content, 'utf-8')
+
+    return {
+      raw,
+      rawText: formatBytes(raw),
+      fileName: chunk.fileName,
+      isEntry: chunk.type === 'chunk' && chunk.isEntry,
+    }
+  })
+
+  const sizeTextLength = Math.max(...sizes.map((size) => size.rawText.length))
+
+  let totalSize = 0
+  for (const size of sizes) {
+    size.rawText = size.rawText.padStart(sizeTextLength)
+    totalSize += size.raw
   }
+
+  for (const size of sizes) {
+    const isEntry = size.isEntry
+
+    const color = isEntry ? chalk.hex('#61afef') : chalk.hex('#98c379')
+
+    console.log(
+      chalk.gray(isEntry ? 'entry' : 'chunk'),
+      color(size.fileName) + ` `.padEnd(filenameLength - size.fileName.length),
+      chalk.white(size.rawText),
+    )
+  }
+
+  const totalText = formatBytes(totalSize)
+
+  // Horizontal rule
+  console.log('-'.repeat(filenameLength + sizeTextLength + 7))
+
+  console.log(
+    chalk.gray('total'),
+    ' '.repeat(filenameLength - (totalText.length - sizeTextLength)),
+    chalk.white(totalText),
+  )
 }
 
-main()
+fsExtra.ensureDirSync(outdir)
+fsExtra.emptyDirSync(outdir)
+writeManifest()
+
+if (isDev) {
+  const watcher = watch(buildOptions)
+
+  let time = 0
+  watcher.on('event', (data) => {
+    if (data.code.includes('_')) {
+      return
+    }
+
+    if (data.code === 'ERROR') {
+      console.error('watcher:', data.error)
+      return
+    }
+
+    if (data.code === 'START') {
+      time = performance.now()
+    }
+
+    const buildTime = (performance.now() - time).toFixed(2)
+
+    console.log(
+      `watcher: ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
+    )
+  })
+
+  watcher.on('change', (e, change) => {
+    console.log(`${change.event}: ${e.slice(cwd.length + 1)}`)
+  })
+
+  fsExtra.watchFile(r('scripts/gen-manifest.ts'), () => {
+    writeManifest()
+  })
+} else {
+  const results = await build(buildOptions)
+
+  logBuildResult(results)
+}

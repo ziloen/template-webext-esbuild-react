@@ -27,7 +27,8 @@
     "serialize-error": "12.0.0",
     "typed-webext": "0.7.0",
     "uuid": "11.1.0",
-    "webextension-polyfill": "0.12.0"
+    "webextension-polyfill": "0.12.0",
+    "zod": "4.0.15"
   },
   "devDependencies": {
     "@babel/core": "7.28.0",
