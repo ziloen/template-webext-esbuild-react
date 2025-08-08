@@ -29,6 +29,7 @@ const _require = createRequire(import.meta.url)
  * @satisfies {RolldownOptions}
  */
 const sharedOptions = {
+  platform: 'browser',
   output: {
     dir: outdir,
     legalComments: 'inline',
@@ -37,25 +38,11 @@ const sharedOptions = {
     assetFileNames: 'assets/[name].[hash][extname]',
     chunkFileNames: 'assets/[name].[hash].js',
   },
-  optimization: {
-    inlineConst: !isDev,
-  },
   define: {
     IS_FIREFOX_ENV: JSON.stringify(isFirefoxEnv),
     IS_DEV: JSON.stringify(isDev),
     IS_PROD: JSON.stringify(!isDev),
   },
-  logLevel: 'info',
-  treeshake: {
-    manualPureFunctions: pureFunctions,
-    moduleSideEffects: [
-      {
-        test: /node_modules[\\/]react[\\/]/,
-        sideEffects: false,
-      },
-    ],
-  },
-  platform: 'browser',
   resolve: {
     alias: {
       '~': r('src'),
@@ -66,6 +53,22 @@ const sharedOptions = {
   moduleTypes: {
     '.woff': 'asset',
     '.woff2': 'asset',
+  },
+  optimization: {
+    inlineConst: !isDev,
+  },
+  treeshake: {
+    manualPureFunctions: pureFunctions,
+    moduleSideEffects: [
+      {
+        test: /node_modules[\\/]react[\\/]index\.js/,
+        sideEffects: false,
+      },
+    ],
+  },
+  logLevel: 'info',
+  experimental: {
+    attachDebugInfo: 'none',
   },
   plugins: [
     // Sonda(),
@@ -168,9 +171,6 @@ const sharedOptions = {
       skipPreflightCheck: true,
     }),
   ],
-  experimental: {
-    attachDebugInfo: 'none',
-  },
 }
 
 /**
@@ -198,6 +198,10 @@ const buildOptions = [
       'pages/options/main': r('src/pages/options/main.tsx'),
       'pages/popup/main': r('src/pages/popup/main.tsx'),
       'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
+    },
+    output: {
+      ...sharedOptions.output,
+      format: 'esm',
     },
     plugins: [
       ...sharedOptions.plugins,
@@ -228,14 +232,6 @@ const buildOptions = [
         },
       },
     ],
-
-    experimental: {
-      ...sharedOptions.experimental,
-    },
-    output: {
-      ...sharedOptions.output,
-      format: 'esm',
-    },
   },
 ]
 

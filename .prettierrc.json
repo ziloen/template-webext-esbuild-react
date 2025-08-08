@@ -1,19 +1,21 @@
 {
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "endOfLine": "lf",
+  "htmlWhitespaceSensitivity": "css",
+  "jsxSingleQuote": false,
+  "objectWrap": "preserve",
+  "plugins": [
+    "@prettier/plugin-oxc",
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-tailwindcss"
+  ],
   "printWidth": 80,
-  "tabWidth": 2,
-  "useTabs": false,
+  "quoteProps": "as-needed",
   "semi": false,
   "singleQuote": true,
-  "quoteProps": "as-needed",
-  "jsxSingleQuote": false,
+  "tabWidth": 2,
   "trailingComma": "all",
-  "bracketSpacing": true,
-  "bracketSameLine": false,
-  "arrowParens": "always",
-  "htmlWhitespaceSensitivity": "css",
-  "objectWrap": "preserve",
-  "endOfLine": "lf",
-  "plugins": [
-    "prettier-plugin-tailwindcss"
-  ]
+  "useTabs": false
 }
