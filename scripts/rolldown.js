@@ -190,8 +190,7 @@ const buildOptions = [
   {
     ...sharedOptions,
     input: {
-      tailwind: r('src/styles/tailwind.css'),
-      fonts: r('src/styles/fonts.ts'),
+      common: r('src/styles/common.css'),
       'background/main': r('src/background/main.ts'),
       'devtools/main': r('src/devtools/main.ts'),
       'pages/devtools-panel/main': r('src/pages/devtools-panel/main.tsx'),
@@ -219,9 +218,7 @@ const buildOptions = [
         generateBundle: {
           handler(outputOptions, bundle, isWrite) {
             // Remove unused assets
-            delete bundle['fonts.css']
-            delete bundle['fonts.js']
-            delete bundle['tailwind.js']
+            delete bundle['common.js']
 
             this.emitFile({
               type: 'asset',

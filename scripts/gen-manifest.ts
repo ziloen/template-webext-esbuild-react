@@ -60,7 +60,7 @@ function generateManifest() {
     ],
     web_accessible_resources: [
       {
-        resources: ['assets/*', 'tailwind.css', 'global-rules.css', '**/*.map'],
+        resources: ['assets/*', 'common.css', 'global-rules.css', '**/*.map'],
         matches: ['<all_urls>'],
       },
     ],

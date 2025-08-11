@@ -1,4 +1,7 @@
 @import "@ziloen/tailwind-config/preset.css" theme(inline);
+@import "@fontsource-variable/fira-code/index.css";
+@import "@fontsource-variable/noto-sans-sc/index.css";
+
 
 @theme {
   --font-noto-sans-sc:
@@ -28,6 +31,10 @@
   /* 清除外部可继承属性（例如 text-align）的影响 */
   :host {
     all: initial;
+  }
+
+  :host,
+  :root {
     font-family: --theme(--font-noto-sans-sc);
   }
 

@@ -22,7 +22,7 @@ export function ReactShadow({ children }: { children?: React.ReactNode }) {
           <>
             <link
               rel="stylesheet"
-              href={Browser.runtime.getURL('tailwind.css')}
+              href={Browser.runtime.getURL('common.css')}
               onLoad={(e) => {
                 setTailwindLoading(false)
               }}
