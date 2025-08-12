@@ -44,7 +44,7 @@ export const PURE_CALLS = {
     'noop',
     'throttle',
   ],
-  rxjs: ['fromEventPattern', 'share'],
+  rxjs: ['fromEventPattern', 'share', 'Subject'],
   'rxjs/operators': ['share'],
   'serialize-error': ['deserializeError', 'serializeError'],
   clsx: ['default', 'clsx'],

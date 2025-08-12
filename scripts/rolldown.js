@@ -1,5 +1,6 @@
 import { babel } from '@rollup/plugin-babel'
 import tailwindcss from '@tailwindcss/postcss'
+import browserslistToEsbuild from 'browserslist-to-esbuild'
 import chalk from 'chalk'
 import fsExtra from 'fs-extra'
 import { exec } from 'node:child_process'
@@ -37,6 +38,9 @@ const sharedOptions = {
     hashCharacters: 'hex',
     assetFileNames: 'assets/[name].[hash][extname]',
     chunkFileNames: 'assets/[name].[hash].js',
+  },
+  transform: {
+    target: browserslistToEsbuild(target),
   },
   define: {
     IS_FIREFOX_ENV: JSON.stringify(isFirefoxEnv),
