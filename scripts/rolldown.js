@@ -49,8 +49,8 @@ const sharedOptions = {
   },
   resolve: {
     alias: {
-      '~': r('src'),
-      '~ext-root': `${extensionProtocol}__MSG_@@extension_id__`,
+      '~/*': r('src/*'),
+      '~ext-root$': `${extensionProtocol}__MSG_@@extension_id__`,
     },
   },
   external: [`${extensionProtocol}__MSG_@@extension_id__/*`],
