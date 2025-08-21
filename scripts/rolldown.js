@@ -139,8 +139,12 @@ const sharedOptions = {
     },
 
     // FIXME: use filter to exclude node_modules
+    // TODO: is it possible to transform after jsx and typescript compilation?
     babel({
       babelHelpers: 'bundled',
+      configFile: false,
+      babelrc: false,
+      skipPreflightCheck: true,
       parserOpts: {
         plugins: ['jsx', 'typescript'],
       },
@@ -172,7 +176,6 @@ const sharedOptions = {
       ],
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       exclude: /node_modules/,
-      skipPreflightCheck: true,
     }),
   ],
 }
