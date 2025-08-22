@@ -275,8 +275,8 @@ function writeManifest() {
  * @param {RolldownOutput[]} results
  */
 function logBuildResult(results) {
-  let longestFileName = 0
   let totalSize = 0
+  let longestFileName = 0
   let longestSizeText = 0
 
   const outputs = results
@@ -286,9 +286,9 @@ function logBuildResult(results) {
         const byteLength = Buffer.byteLength(content, 'utf-8')
         const sizeText = formatBytes(byteLength)
 
+        totalSize += byteLength
         longestFileName = Math.max(longestFileName, out.fileName.length)
         longestSizeText = Math.max(longestSizeText, sizeText.length)
-        totalSize += byteLength
 
         return {
           byteLength,
@@ -336,10 +336,10 @@ function logBuildResult(results) {
     )
   }
 
-  const totalText = formatBytes(totalSize)
-
   // Horizontal rule
   console.log('-'.repeat(filenameLength + longestSizeText + 7))
+
+  const totalText = formatBytes(totalSize)
 
   console.log(
     chalk.gray('total'),
