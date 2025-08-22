@@ -5,6 +5,7 @@ import chalk from 'chalk'
 import fsExtra from 'fs-extra'
 import { exec } from 'node:child_process'
 import { createRequire } from 'node:module'
+import path from 'node:path'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
@@ -216,14 +217,13 @@ const buildOptions = [
         flatten: false,
         targets: [
           { src: 'public/**/*', dest: 'dist/dev' },
-          { src: 'src/pages/**/*.html', dest: 'dist/dev' },
           { src: 'src/devtools/index.html', dest: 'dist/dev' },
         ],
       }),
       {
         name: 'emit-global-rules',
         generateBundle: {
-          handler(outputOptions, bundle, isWrite) {
+          async handler(outputOptions, bundle, isWrite) {
             // Remove unused assets
             delete bundle['common.js']
 
@@ -232,6 +232,31 @@ const buildOptions = [
               fileName: 'global-rules.css',
               source: globalRulesRoot.toResult().css,
             })
+
+            const templateHtml = await this.fs.readFile(
+              r('src/pages/index.html'),
+              { encoding: 'utf8' },
+            )
+
+            // Generate HTML files for each page
+            for (const [fileName, chunk] of Object.entries(bundle)) {
+              if (chunk.type !== 'chunk' || !chunk.isEntry) continue
+              if (!fileName.startsWith('pages/')) continue
+
+              const htmlName = path.join(path.dirname(fileName), 'index.html')
+
+              const htmlCode = templateHtml.replace(
+                '__MAIN_SCRIPT__',
+                `./${path.basename(fileName)}`,
+              )
+
+              this.emitFile({
+                type: 'asset',
+                fileName: htmlName,
+                source: htmlCode,
+                name: 'index.html',
+              })
+            }
           },
         },
       },
