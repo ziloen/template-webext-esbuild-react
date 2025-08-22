@@ -243,7 +243,10 @@ const buildOptions = [
               if (chunk.type !== 'chunk' || !chunk.isEntry) continue
               if (!fileName.startsWith('pages/')) continue
 
-              const htmlName = path.join(path.dirname(fileName), 'index.html')
+              const htmlName = path.posix.join(
+                path.dirname(fileName),
+                'index.html',
+              )
 
               const htmlCode = templateHtml.replace(
                 '__MAIN_SCRIPT__',
@@ -272,70 +275,75 @@ function writeManifest() {
  * @param {RolldownOutput[]} results
  */
 function logBuildResult(results) {
+  let longestFileName = 0
+  let totalSize = 0
+  let longestSizeText = 0
+
   const outputs = results
-    .flatMap((result) => result.output)
+    .flatMap((result) => {
+      return result.output.map((out) => {
+        const content = out.type === 'chunk' ? out.code : out.source
+        const byteLength = Buffer.byteLength(content, 'utf-8')
+        const sizeText = formatBytes(byteLength)
+
+        longestFileName = Math.max(longestFileName, out.fileName.length)
+        longestSizeText = Math.max(longestSizeText, sizeText.length)
+        totalSize += byteLength
+
+        return {
+          byteLength,
+          sizeText: formatBytes(byteLength),
+          isEntry: out.type === 'chunk' && out.isEntry,
+          ...out,
+        }
+      })
+    })
     .sort((a, b) => {
       const aType = a.type === 'chunk' && a.isEntry ? 'entry' : a.type
       const bType = b.type === 'chunk' && b.isEntry ? 'entry' : b.type
       const priority = {
         entry: 0,
         chunk: 1,
-        asset: 2,
+        asset: 1,
       }
 
-      if (aType !== bType) {
+      if (priority[aType] !== priority[bType]) {
         return priority[aType] - priority[bType]
+      }
+
+      if (a.byteLength !== b.byteLength) {
+        return b.byteLength - a.byteLength
       }
 
       return a.fileName.localeCompare(b.fileName)
     })
 
-  const spaceLength = 2
+  const filenameLength = longestFileName + 2
 
-  const filenameLength =
-    Math.max(...outputs.map((output) => output.fileName.length)) + spaceLength
-
-  const sizes = outputs.map((chunk) => {
-    const content = chunk.type === 'chunk' ? chunk.code : chunk.source
-
-    const raw = Buffer.byteLength(content, 'utf-8')
-
-    return {
-      raw,
-      rawText: formatBytes(raw),
-      fileName: chunk.fileName,
-      isEntry: chunk.type === 'chunk' && chunk.isEntry,
-    }
-  })
-
-  const sizeTextLength = Math.max(...sizes.map((size) => size.rawText.length))
-
-  let totalSize = 0
-  for (const size of sizes) {
-    size.rawText = size.rawText.padStart(sizeTextLength)
-    totalSize += size.raw
+  for (const out of outputs) {
+    out.sizeText = out.sizeText.padStart(longestSizeText)
   }
 
-  for (const size of sizes) {
-    const isEntry = size.isEntry
+  for (const out of outputs) {
+    const isEntry = out.isEntry
 
     const color = isEntry ? chalk.hex('#61afef') : chalk.hex('#98c379')
 
     console.log(
       chalk.gray(isEntry ? 'entry' : 'chunk'),
-      color(size.fileName) + ` `.padEnd(filenameLength - size.fileName.length),
-      chalk.white(size.rawText),
+      color(out.fileName) + ` `.padEnd(filenameLength - out.fileName.length),
+      chalk.white(out.sizeText),
     )
   }
 
   const totalText = formatBytes(totalSize)
 
   // Horizontal rule
-  console.log('-'.repeat(filenameLength + sizeTextLength + 7))
+  console.log('-'.repeat(filenameLength + longestSizeText + 7))
 
   console.log(
     chalk.gray('total'),
-    ' '.repeat(filenameLength - (totalText.length - sizeTextLength)),
+    ' '.repeat(filenameLength - (totalText.length - longestSizeText)),
     chalk.white(totalText),
   )
 }
