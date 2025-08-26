@@ -31,7 +31,20 @@ jobs:
       - name: Build Chrome Extension
         run: npm run build
 
+      # https://github.com/microsoft/playwright/issues/7249#issuecomment-2664215505
+      - name: Extract Playwright version
+        shell: bash
+        run: echo "PLAYWRIGHT_VERSION=$(jq -r '.devDependencies.playwright' package.json)" >> $GITHUB_ENV
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}
+
       - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium --with-deps
 
       - name: Run Playwright tests
