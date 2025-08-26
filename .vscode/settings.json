@@ -23,10 +23,10 @@
     "console"
   ],
   "prettier.enable": true,
+  "typescript.experimental.useTsgo": true,
   "typescript.preferences.autoImportSpecifierExcludeRegexes": [
     "node:console",
     "console"
   ],
-  "typescript.preferences.preferTypeOnlyAutoImports": true,
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "typescript.preferences.preferTypeOnlyAutoImports": true
 }
