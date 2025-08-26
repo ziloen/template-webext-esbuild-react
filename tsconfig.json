@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "rootDir": "./",
     "outDir": "dist",
     // src/manifest.ts need this
     // https://github.com/microsoft/TypeScript/pull/49886

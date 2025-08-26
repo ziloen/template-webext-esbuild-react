@@ -3,6 +3,7 @@
     "./tsconfig.json"
   ],
   "compilerOptions": {
+    "rootDir": "./",
     "composite": true,
     "allowJs": true,
     "checkJs": true,
