@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "dist",
     // src/manifest.ts need this
     // https://github.com/microsoft/TypeScript/pull/49886
@@ -41,7 +40,7 @@
     ],
     "paths": {
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
       "~cwd/*": [
         "./*"
