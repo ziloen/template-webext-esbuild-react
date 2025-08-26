@@ -2,6 +2,7 @@ import { babel } from '@rollup/plugin-babel'
 import tailwindcss from '@tailwindcss/postcss'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
 import chalk from 'chalk'
+import { mapValues } from 'es-toolkit'
 import fsExtra from 'fs-extra'
 import { exec } from 'node:child_process'
 import { createRequire } from 'node:module'
@@ -43,11 +44,14 @@ const sharedOptions = {
   transform: {
     target: browserslistToEsbuild(target),
   },
-  define: {
-    IS_FIREFOX_ENV: JSON.stringify(isFirefoxEnv),
-    IS_DEV: JSON.stringify(isDev),
-    IS_PROD: JSON.stringify(!isDev),
-  },
+  define: mapValues(
+    {
+      IS_FIREFOX_ENV: isFirefoxEnv,
+      IS_DEV: isDev,
+      IS_PROD: !isDev,
+    },
+    (v) => JSON.stringify(v),
+  ),
   resolve: {
     alias: {
       '~/*': r('src/*'),
@@ -362,7 +366,7 @@ if (isDev) {
     }
 
     if (data.code === 'ERROR') {
-      console.error('watcher:', data.error)
+      console.error('[watch]', data.error)
       return
     }
 
@@ -373,12 +377,12 @@ if (isDev) {
     const buildTime = (performance.now() - time).toFixed(2)
 
     console.log(
-      `watcher: ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
+      `[watch] ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
     )
   })
 
   watcher.on('change', (e, change) => {
-    console.log(`${change.event}: ${e.slice(cwd.length + 1)}`)
+    console.log(`[watch] ${change.event}: ${e.slice(cwd.length + 1)}`)
   })
 
   fsExtra.watchFile(r('scripts/gen-manifest.ts'), () => {
