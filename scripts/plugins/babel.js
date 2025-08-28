@@ -1,6 +1,6 @@
 import { transform } from '@babel/core'
 import { valueToNode } from '@babel/types'
-import fs from 'fs/promises'
+import fs from 'node:fs/promises'
 import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
@@ -11,6 +11,24 @@ const require = createRequire(import.meta.url)
 
 /** @type {import("babel-plugin-annotate-module-pure").Options["pureCalls"]} */
 export const PURE_CALLS = {
+  classnames: ['default'],
+  clsx: ['default', 'clsx'],
+  'clsx/lite': ['default', 'clsx'],
+  'es-toolkit': ['mapValues'],
+  'lodash-es': [
+    'clamp',
+    'clone',
+    'debounce',
+    'isEmpty',
+    'isEqual',
+    'isFunction',
+    'isPlainObject',
+    'memoize',
+    'noop',
+    'throttle',
+  ],
+  'mobx-react': ['observer'],
+  'mobx-react-lite': ['observer'],
   react: [
     'cloneElement',
     'createContext',
@@ -23,6 +41,11 @@ export const PURE_CALLS = {
     'memo',
   ],
   'react-dom': ['createPortal'],
+  rxjs: ['fromEventPattern', 'share', 'Subject'],
+  'rxjs/operators': ['share'],
+  'serialize-error': ['deserializeError', 'serializeError'],
+  'tailwind-merge': ['twMerge', 'extendTailwindMerge'],
+  uuid: ['v4', 'v7'],
   'webextension-polyfill': [
     ['default', 'i18n', 'detectLanguage'],
     ['default', 'runtime', 'getManifest'],
@@ -33,29 +56,6 @@ export const PURE_CALLS = {
     ['runtime', 'getURL'],
     ['tabs', 'query'],
   ],
-  'lodash-es': [
-    'clone',
-    'debounce',
-    'isEmpty',
-    'isEqual',
-    'isFunction',
-    'isPlainObject',
-    'memoize',
-    'noop',
-    'throttle',
-  ],
-  rxjs: ['fromEventPattern', 'share', 'Subject'],
-  'rxjs/operators': ['share'],
-  'serialize-error': ['deserializeError', 'serializeError'],
-  clsx: ['default', 'clsx'],
-  'clsx/lite': ['default', 'clsx'],
-
-  // Not installed
-  'mobx-react-lite': ['observer'],
-  'mobx-react': ['observer'],
-  classnames: ['default'],
-  uuid: ['v4'],
-  'tailwind-merge': ['twMerge', 'extendTailwindMerge'],
   zod: [
     ['z', 'array'],
     ['z', 'boolean'],

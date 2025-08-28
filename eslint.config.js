@@ -1,7 +1,8 @@
 import { react } from '@ziloen/eslint-config'
 
 /** @type { import("@ziloen/eslint-config").FlatESLintConfig[] } */
-export default [
-  ...react({ project: ['./tsconfig.json', './tsconfig.node.json'] }),
-  { ignores: ['scripts'] },
-]
+const config = react({
+  project: ['./tsconfig.json', './tsconfig.app.json', './tsconfig.node.json'],
+})
+
+export default config

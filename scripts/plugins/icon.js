@@ -157,7 +157,7 @@ function svgToDataUrl(svg) {
 function iconEntryToName(entry) {
   return entry
     .replace(/\.svg$/, '')
-    .split(/\\|\/|-/)
+    .split(/[-/\\]/)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join('')
 }

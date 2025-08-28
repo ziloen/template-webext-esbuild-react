@@ -2,8 +2,8 @@
  * https://github.com/LinbuduLab/esbuild-plugins/tree/main/packages/esbuild-plugin-copy
  */
 import chokidar from 'chokidar'
-import fs from 'fs-extra'
-import { globby } from 'globby'
+import fsExtra from 'fs-extra'
+import fs from 'node:fs/promises'
 import path from 'node:path'
 
 /**
@@ -42,12 +42,7 @@ export function CopyPlugin({
       build.onEnd(async (result) => {
         for await (const asset of assets) {
           const fromPaths = [
-            ...new Set(
-              await globby(asset.from, {
-                expandDirectories: false,
-                onlyFiles: true,
-              }),
-            ),
+            ...new Set(await Array.fromAsync(fs.glob(asset.from))),
           ]
 
           function executor() {
@@ -77,12 +72,15 @@ function formatAssets(assets) {
   return assets.filter((asset) => asset.from && asset.to)
 }
 
-function copy({ transform, from, to }) {
-  const content = fs.readFileSync(from, 'utf-8')
-  const code = transform ? transform(content) : content
+/**
+ * @param {AssetPair} param0
+ */
+async function copy({ transform, from, to }) {
+  const content = fsExtra.readFileSync(from, 'utf-8')
+  const code = transform ? await transform(content) : content
   const toPath = path.join(to, path.basename(from))
-  fs.ensureDirSync(path.dirname(toPath))
-  fs.writeFileSync(toPath, code)
+  fsExtra.ensureDirSync(path.dirname(toPath))
+  fsExtra.writeFileSync(toPath, code)
 }
 
 // Add `<script src="http://localhost:8097"></script>` to the end of the head tag

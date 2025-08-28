@@ -1,64 +1,9 @@
 {
-  "compilerOptions": {
-    "rootDir": "./",
-    "outDir": "dist",
-    // src/manifest.ts need this
-    // https://github.com/microsoft/TypeScript/pull/49886
-    "allowJs": true,
-    "esModuleInterop": true,
-    "target": "ESNext",
-    "strict": true,
-    "alwaysStrict": true,
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "exactOptionalPropertyTypes": true,
-    "erasableSyntaxOnly": false,
-    "noImplicitAny": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "stripInternal": true,
-    "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowUnreachableCode": true,
-    "allowUnusedLabels": true,
-    "noUncheckedIndexedAccess": true,
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext",
-    ],
-    "types": [
-      "chrome",
-    ],
-    "paths": {
-      "~/*": [
-        "./src/*"
-      ],
-      "~cwd/*": [
-        "./*"
-      ],
-    },
-  },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "playwright-report",
-    "public",
-    "test-results",
-  ],
+  "files": [],
   "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
     {
       "path": "./tsconfig.node.json"
     }
