@@ -52,6 +52,7 @@ export default function SvgIcon(optiopns) {
       const dtsContent =
         "declare module '~icons' {\n  type SvgComponent = React.FC<React.ComponentProps<'svg'>>\n" +
         Array.from(iconPathMap.keys())
+          .sort((a, b) => a.localeCompare(b))
           .map((iconName) => `  export const ${iconName}: SvgComponent`)
           .join('\n') +
         '\n}\n'
