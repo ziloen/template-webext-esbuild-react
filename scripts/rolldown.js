@@ -12,6 +12,7 @@ import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
 import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
+import ImportSuffix from './plugins/import-suffix.js'
 
 /**
  * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk, RolldownOutput } from "rolldown"
@@ -81,6 +82,7 @@ const sharedOptions = {
   },
   plugins: [
     // Sonda(),
+    ImportSuffix(),
     {
       name: 'process-css',
       transform: {
