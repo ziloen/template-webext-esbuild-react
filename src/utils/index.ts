@@ -6,20 +6,26 @@ export function listenExtensionEvent<CB extends (...args: any[]) => any>(
   callback: NoInfer<CB>,
   options?: { signal?: AbortSignal },
 ): () => void {
-  target.addListener(callback)
-
   const signal = options?.signal
+
+  if (signal?.aborted) {
+    return () => {}
+  }
+
+  target.addListener(callback)
 
   const removeListener = () => target.removeListener(callback)
 
   if (signal) {
     signal.addEventListener('abort', removeListener, { once: true })
+
+    return () => {
+      removeListener()
+      signal.removeEventListener('abort', removeListener)
+    }
   }
 
-  return () => {
-    removeListener()
-    target.removeListener(callback)
-  }
+  return removeListener
 }
 
 export async function getActiveTab() {
