@@ -1,14 +1,11 @@
 import type { Events } from 'webextension-polyfill'
 import Browser from 'webextension-polyfill'
 
-/** {@link listenEvent} */
-type InferCallback<T> = T extends Events.Event<infer U> ? U : never
-
-export function listenEvent<T extends Events.Event<(...args: any[]) => any>>(
-  target: T,
-  callback: InferCallback<NoInfer<T>>,
+export function listenExtensionEvent<CB extends (...args: any[]) => any>(
+  target: Events.Event<CB>,
+  callback: NoInfer<CB>,
   options?: { signal?: AbortSignal },
-) {
+): () => void {
   target.addListener(callback)
 
   const signal = options?.signal
