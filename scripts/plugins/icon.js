@@ -40,7 +40,6 @@ export default function SvgIcon(optiopns) {
     name: 'svg-icon',
 
     async buildStart() {
-      this.addWatchFile(iconsDir)
       // scan the icons directory
       for await (const entry of fs.glob('**/*.svg', { cwd: iconsDir })) {
         const iconName = iconNamePrefix + iconEntryToName(entry)
@@ -113,6 +112,8 @@ export default function SvgIcon(optiopns) {
           if (!iconPath) {
             throw new Error(`Icon "${iconName}" not found.`)
           }
+
+          this.addWatchFile(iconPath)
 
           const svg = await this.fs.readFile(iconPath, { encoding: 'utf8' })
 

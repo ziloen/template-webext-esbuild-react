@@ -51,9 +51,11 @@ export default function ImportSuffix() {
         }
 
         const filePath = id.slice(0, id.length - match.length)
+
+        this.addWatchFile(filePath)
+
         const fileBuffer = await this.fs.readFile(filePath)
         const fileName = path.basename(filePath)
-
         const referenceId = this.emitFile({
           type: 'asset',
           name: fileName,
