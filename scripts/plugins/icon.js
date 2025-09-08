@@ -39,7 +39,7 @@ export default function SvgIcon(optiopns) {
   return {
     name: 'svg-icon',
 
-    async buildStart() {
+    async buildStart(options) {
       // scan the icons directory
       for await (const entry of fs.glob('**/*.svg', { cwd: iconsDir })) {
         const iconName = iconNamePrefix + iconEntryToName(entry)
