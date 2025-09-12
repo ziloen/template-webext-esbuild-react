@@ -95,6 +95,7 @@ const sharedOptions = {
         order: 'post',
         handler(code, id, meta) {
           // FIXME: tailwind 运行了两次？
+          // TODO: support css modules
           return postcss([tailwindcss])
             .process(code, {
               from: id,

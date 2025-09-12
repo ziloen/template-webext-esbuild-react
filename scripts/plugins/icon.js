@@ -148,6 +148,7 @@ export default function SvgIcon(optiopns) {
 
 /**
  * @param {string} svg
+ * @returns {string}
  */
 function svgToDataUrl(svg) {
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
@@ -155,6 +156,7 @@ function svgToDataUrl(svg) {
 
 /**
  * @param {string} entry
+ * @returns {string}
  */
 function iconEntryToName(entry) {
   return entry
