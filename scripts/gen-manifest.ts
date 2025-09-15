@@ -69,7 +69,10 @@ function generateManifest() {
   if (isFirefoxEnv) {
     manifest.browser_specific_settings = {
       gecko: {
-        id: 'test1@webext.com',
+        id: '@extension-name.developer-name',
+        strict_min_version: '128.0',
+      },
+      gecko_android: {
         strict_min_version: '128.0',
       },
     }

@@ -1,7 +1,7 @@
 import { transform as svgrTransform } from '@svgr/core'
 import jsx from '@svgr/plugin-jsx'
-import fsExtra from 'fs-extra'
-import fs from 'node:fs/promises'
+import { ensureFile } from 'fs-extra'
+import { glob } from 'node:fs/promises'
 import path from 'node:path'
 
 /**
@@ -41,7 +41,7 @@ export default function SvgIcon(optiopns) {
 
     async buildStart(options) {
       // scan the icons directory
-      for await (const entry of fs.glob('**/*.svg', { cwd: iconsDir })) {
+      for await (const entry of glob('**/*.svg', { cwd: iconsDir })) {
         const iconName = iconNamePrefix + iconEntryToName(entry)
         const iconPath = path.join(iconsDir, entry)
         iconPathMap.set(iconName, iconPath)
@@ -56,7 +56,7 @@ export default function SvgIcon(optiopns) {
           .join('\n') +
         '\n}\n'
 
-      await fsExtra.ensureFile(dtsFilePath)
+      await ensureFile(dtsFilePath)
       await this.fs.writeFile(dtsFilePath, dtsContent, { encoding: 'utf8' })
     },
 
