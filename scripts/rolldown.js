@@ -44,6 +44,9 @@ const sharedOptions = {
   },
   transform: {
     target: browserslistToEsbuild(target),
+    typescript: {
+      onlyRemoveTypeImports: false,
+    },
   },
   define: mapValues(
     {
