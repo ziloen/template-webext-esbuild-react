@@ -150,6 +150,7 @@ export function BabelPlugin() {
   }
 }
 
+/** @type {string[]} */
 export const pureFunctions = [
   'Array.from',
   'Array.isArray',

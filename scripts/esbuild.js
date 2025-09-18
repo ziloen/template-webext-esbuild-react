@@ -1,7 +1,5 @@
 import tailwindcss from '@tailwindcss/postcss'
 import { build, context } from 'esbuild'
-import { copy as CopyPlugin } from 'esbuild-plugin-copy'
-import stylePlugin from 'esbuild-style-plugin'
 import fs from 'fs-extra'
 import { execSync } from 'node:child_process'
 import { BabelPlugin, pureFunctions } from './plugins/babel.js'
@@ -54,15 +52,7 @@ const sharedOptions = {
   pure: pureFunctions,
   logLevel: 'info',
   color: true,
-  plugins: [
-    ...(isDev ? [] : [BabelPlugin()]),
-
-    stylePlugin({
-      postcss: {
-        plugins: [tailwindcss],
-      },
-    }),
-  ],
+  plugins: [...(isDev ? [] : [BabelPlugin()])],
 }
 
 /**
@@ -80,19 +70,7 @@ const buildOptions = {
   ],
   format: 'esm',
   splitting: true,
-  plugins: [
-    ...(sharedOptions.plugins ?? []),
-
-    CopyPlugin({
-      resolveFrom: 'cwd',
-      assets: [
-        { from: 'public/**/*', to: 'dist/dev' },
-        { from: 'src/pages/**/*.html', to: 'dist/dev/pages' },
-        { from: 'src/devtools/index.html', to: 'dist/dev/devtools' },
-      ],
-      watch: isDev,
-    }),
-  ],
+  plugins: [...(sharedOptions.plugins ?? [])],
 }
 
 /**

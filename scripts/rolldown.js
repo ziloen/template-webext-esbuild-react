@@ -395,6 +395,7 @@ if (isDev) {
     writeManifest()
   })
 } else {
+  // TODO: generate metadata.json to analyze the bundle
   const results = await build(buildOptions)
 
   logBuildResult(results)
