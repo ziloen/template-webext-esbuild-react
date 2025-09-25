@@ -70,10 +70,10 @@ function generateManifest() {
     manifest.browser_specific_settings = {
       gecko: {
         id: '@extension-name.developer-name',
-        strict_min_version: '128.0',
+        strict_min_version: '140.0',
       },
       gecko_android: {
-        strict_min_version: '128.0',
+        strict_min_version: '140.0',
       },
     }
 

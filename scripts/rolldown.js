@@ -383,12 +383,18 @@ if (isDev) {
     const buildTime = (performance.now() - time).toFixed(2)
 
     console.log(
-      `[watch] ${data.code}${data.code === 'END' ? ` in ${buildTime}ms` : ''}`,
+      chalk.cyanBright('[watch]'),
+      chalk.green(data.code),
+      data.code === 'END' ? `in ${buildTime}ms` : '',
     )
   })
 
   watcher.on('change', (e, change) => {
-    console.log(`[watch] ${change.event}: ${e.slice(cwd.length + 1)}`)
+    console.log(
+      chalk.cyan('[watch]'),
+      chalk.green(change.event),
+      e.slice(cwd.length + 1),
+    )
   })
 
   fsExtra.watchFile(r('scripts/gen-manifest.ts'), () => {
