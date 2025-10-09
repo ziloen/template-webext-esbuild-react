@@ -1,11 +1,11 @@
 import { babel } from '@rollup/plugin-babel'
 import tailwindcss from '@tailwindcss/postcss'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
-import chalk from 'chalk'
 import { mapValues } from 'es-toolkit'
 import fsExtra from 'fs-extra'
 import { exec } from 'node:child_process'
 import { createRequire } from 'node:module'
+import { styleText } from 'node:util'
 import path from 'node:path'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
@@ -337,12 +337,11 @@ function logBuildResult(results) {
   for (const out of outputs) {
     const isEntry = out.isEntry
 
-    const color = isEntry ? chalk.hex('#61afef') : chalk.hex('#98c379')
-
     console.log(
-      chalk.gray(isEntry ? 'entry' : 'chunk'),
-      color(out.fileName) + ` `.padEnd(filenameLength - out.fileName.length),
-      chalk.white(out.sizeText),
+      styleText('gray', isEntry ? 'entry' : 'chunk'),
+      styleText(isEntry ? 'blue' : 'green', out.fileName) +
+        ` `.padEnd(filenameLength - out.fileName.length),
+      styleText('white', out.sizeText),
     )
   }
 
@@ -352,9 +351,9 @@ function logBuildResult(results) {
   const totalText = formatBytes(totalSize)
 
   console.log(
-    chalk.gray('total'),
+    styleText('gray', 'total'),
     ' '.repeat(filenameLength - (totalText.length - longestSizeText)),
-    chalk.white(totalText),
+    styleText('white', totalText),
   )
 }
 
@@ -383,16 +382,16 @@ if (isDev) {
     const buildTime = (performance.now() - time).toFixed(2)
 
     console.log(
-      chalk.cyanBright('[watch]'),
-      chalk.green(data.code),
+      styleText('cyanBright', '[watch]'),
+      styleText('green', data.code),
       data.code === 'END' ? `in ${buildTime}ms` : '',
     )
   })
 
   watcher.on('change', (e, change) => {
     console.log(
-      chalk.cyan('[watch]'),
-      chalk.green(change.event),
+      styleText('cyan', '[watch]'),
+      styleText('green', change.event),
       e.slice(cwd.length + 1),
     )
   })

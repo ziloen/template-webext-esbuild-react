@@ -1,4 +1,3 @@
-import chalk from 'chalk'
 import fsExtra from 'fs-extra'
 import type { Manifest } from 'webextension-polyfill'
 import { commitShortHash, isCI, isDev, isFirefoxEnv, r } from './utils.js'
@@ -110,7 +109,6 @@ function generateManifest() {
   return manifest
 }
 
-console.log(chalk.gray('write'), chalk.hex('#d19a66')('manifest.json'))
 fsExtra.writeJSONSync(r('dist/dev/manifest.json'), generateManifest(), {
   spaces: 2,
 })
