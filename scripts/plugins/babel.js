@@ -177,4 +177,5 @@ export const pureFunctions = [
   'Object.keys',
   'Object.values',
   'structuredClone',
+  'URLPattern',
 ]
