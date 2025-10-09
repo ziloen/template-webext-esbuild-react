@@ -11,6 +11,7 @@ const require = createRequire(import.meta.url)
 
 /** @type {import("babel-plugin-annotate-module-pure").Options["pureCalls"]} */
 export const PURE_CALLS = {
+  axios: [['default', 'create']],
   classnames: ['default'],
   clsx: ['default', 'clsx'],
   'clsx/lite': ['default', 'clsx'],
