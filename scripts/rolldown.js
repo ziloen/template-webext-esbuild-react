@@ -382,7 +382,7 @@ if (isDev) {
     const buildTime = (performance.now() - time).toFixed(2)
 
     console.log(
-      styleText('cyanBright', '[watch]'),
+      styleText('cyan', '[watch]'),
       styleText('green', data.code),
       data.code === 'END' ? `in ${buildTime}ms` : '',
     )
