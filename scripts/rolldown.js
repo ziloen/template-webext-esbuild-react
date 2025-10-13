@@ -57,12 +57,17 @@ const sharedOptions = {
     (v) => JSON.stringify(v),
   ),
   resolve: {
+    // https://webpack.js.org/configuration/resolve/#resolvealias
     alias: {
       '~/*': r('src/*'),
       '~ext-root$': `${extensionProtocol}__MSG_@@extension_id__`,
     },
   },
-  external: [`${extensionProtocol}__MSG_@@extension_id__/*`],
+  external: [
+    // https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Internationalization#predefined_messages
+    'moz-extension://__MSG_@@extension_id__/*',
+    'chrome-extension://__MSG_@@extension_id__/*',
+  ],
   moduleTypes: {
     '.woff': 'asset',
     '.woff2': 'asset',
@@ -198,7 +203,7 @@ const buildOptions = [
   {
     ...sharedOptions,
     input: {
-      'content-scripts/main': r('src/content-scripts/main.tsx'),
+      'content-scripts/start': r('src/content-scripts/start.ts'),
     },
     output: {
       ...sharedOptions.output,
@@ -209,6 +214,7 @@ const buildOptions = [
     ...sharedOptions,
     input: {
       common: r('src/styles/common.css'),
+      'content-scripts/main': r('src/content-scripts/main.tsx'),
       'background/main': r('src/background/main.ts'),
       'devtools/main': r('src/devtools/main.ts'),
       'pages/devtools-panel/main': r('src/pages/devtools-panel/main.tsx'),

@@ -52,14 +52,20 @@ function generateManifest() {
     content_scripts: [
       {
         matches: ['<all_urls>'],
-        js: ['./content-scripts/main.js'],
+        js: ['./content-scripts/start.js'],
         css: ['global-rules.css'],
-        run_at: 'document_end',
+        run_at: 'document_start',
       },
     ],
     web_accessible_resources: [
       {
-        resources: ['assets/*', 'common.css', 'global-rules.css', '**/*.map'],
+        resources: [
+          'assets/*',
+          'common.css',
+          'global-rules.css',
+          '**/*.map',
+          'content-scripts/main.js',
+        ],
         matches: ['<all_urls>'],
       },
     ],
