@@ -1,6 +1,13 @@
 import fsExtra from 'fs-extra'
 import type { Manifest } from 'webextension-polyfill'
-import { commitShortHash, isCI, isDev, isFirefoxEnv, r } from './utils.js'
+import {
+  commitShortHash,
+  isCI,
+  isDev,
+  isFirefoxEnv,
+  outDir,
+  r,
+} from './utils.js'
 
 type ChromiumPermissions = 'sidePanel'
 type Permissions =
@@ -115,6 +122,6 @@ function generateManifest() {
   return manifest
 }
 
-fsExtra.writeJSONSync(r('dist/dev/manifest.json'), generateManifest(), {
+fsExtra.writeJSONSync(r(outDir, 'manifest.json'), generateManifest(), {
   spaces: 2,
 })

@@ -5,14 +5,14 @@ import { mapValues } from 'es-toolkit'
 import fsExtra from 'fs-extra'
 import { exec } from 'node:child_process'
 import { createRequire } from 'node:module'
-import { styleText } from 'node:util'
 import path from 'node:path'
+import { styleText } from 'node:util'
 import postcss from 'postcss'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
-import { formatBytes, isDev, isFirefoxEnv, r } from './utils.js'
 import ImportSuffix from './plugins/import-suffix.js'
+import { formatBytes, isDev, isFirefoxEnv, outDir, r } from './utils.js'
 
 /**
  * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk, RolldownOutput } from "rolldown"
@@ -20,7 +20,6 @@ import ImportSuffix from './plugins/import-suffix.js'
  */
 
 const cwd = process.cwd()
-const outdir = r('dist/dev')
 const target = '> 0.5%, last 2 versions, Firefox ESR, not dead'
 const extensionProtocol = isFirefoxEnv
   ? 'moz-extension://'
@@ -35,7 +34,7 @@ const _require = createRequire(import.meta.url)
 const sharedOptions = {
   platform: 'browser',
   output: {
-    dir: outdir,
+    dir: outDir,
     legalComments: 'inline',
     sourcemap: isDev ? 'inline' : false,
     hashCharacters: 'hex',
@@ -87,6 +86,7 @@ const sharedOptions = {
   logLevel: 'info',
   experimental: {
     attachDebugInfo: 'none',
+    nativeMagicString: true,
   },
   plugins: [
     // Sonda(),
@@ -232,8 +232,8 @@ const buildOptions = [
         cwd: cwd,
         flatten: false,
         targets: [
-          { src: 'public/**/*', dest: 'dist/dev' },
-          { src: 'src/devtools/index.html', dest: 'dist/dev' },
+          { src: 'public/**/*', dest: outDir },
+          { src: 'src/devtools/index.html', dest: outDir },
         ],
       }),
       {
@@ -363,8 +363,8 @@ function logBuildResult(results) {
   )
 }
 
-fsExtra.ensureDirSync(outdir)
-fsExtra.emptyDirSync(outdir)
+fsExtra.ensureDirSync(outDir)
+fsExtra.emptyDirSync(outDir)
 writeManifest()
 
 if (isDev) {

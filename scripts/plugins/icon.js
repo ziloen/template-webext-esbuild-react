@@ -8,8 +8,10 @@ import path from 'node:path'
  * @import { Plugin } from "rolldown"
  */
 
-const virtualModuleId = '~icons'
-const resolvedVirtualModuleId = '\0' + virtualModuleId
+const moduleId = '~icons'
+const subModulePrefix = moduleId + ':'
+const resolvedModuleId = '\0' + moduleId
+const resolvedSubModulePrefix = '\0' + subModulePrefix
 /**
  * @type {Map<string, string>}
  * { IconName => 'C:\\path\\to\\icon.svg' }
@@ -68,12 +70,12 @@ export default function SvgIcon(optiopns) {
       },
       handler(source) {
         // ~icons
-        if (source === virtualModuleId) {
-          return resolvedVirtualModuleId
+        if (source === moduleId) {
+          return resolvedModuleId
         }
 
-        // ~icons/IconName
-        if (source.startsWith(virtualModuleId + '/')) {
+        // ~icons:IconName
+        if (source.startsWith(subModulePrefix)) {
           return `\0${source}`
         }
 
@@ -89,11 +91,11 @@ export default function SvgIcon(optiopns) {
       },
       async handler(id) {
         // ~icons
-        if (id === resolvedVirtualModuleId) {
+        if (id === resolvedModuleId) {
           const exports = Array.from(iconPathMap.keys())
             .map(
               (iconName) =>
-                `export { default as ${iconName} } from "${virtualModuleId}/${iconName}";`,
+                `export { default as ${iconName} } from "${subModulePrefix}${iconName}";`,
             )
             .join('\n')
 
@@ -104,9 +106,9 @@ export default function SvgIcon(optiopns) {
           }
         }
 
-        // ~icons/IconName
-        if (id.startsWith(resolvedVirtualModuleId + '/')) {
-          const iconName = id.slice(resolvedVirtualModuleId.length + 1)
+        // ~icons:IconName
+        if (id.startsWith(resolvedSubModulePrefix)) {
+          const iconName = id.slice(resolvedSubModulePrefix.length)
           const iconPath = iconPathMap.get(iconName)
 
           if (!iconPath) {

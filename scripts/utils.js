@@ -19,6 +19,8 @@ export const isCI = process.env.CI === 'true'
 
 export const commitShortHash = process.env.GITHUB_SHA?.slice(0, 7) ?? 'local'
 
+export const outDir = isFirefoxEnv ? r('dist/firefox') : r('dist/chrome')
+
 /**
  * @param {number} bytes
  * @returns {string}
