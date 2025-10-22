@@ -3,7 +3,6 @@ import tailwindcss from '@tailwindcss/postcss'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
 import { mapValues } from 'es-toolkit'
 import fsExtra from 'fs-extra'
-import { exec } from 'node:child_process'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { styleText } from 'node:util'
@@ -34,6 +33,8 @@ const _require = createRequire(import.meta.url)
 const sharedOptions = {
   platform: 'browser',
   output: {
+    // FIXME: clean 会导致 copy 插件失效
+    cleanDir: false,
     dir: outDir,
     legalComments: 'inline',
     sourcemap: isDev ? 'inline' : false,
@@ -46,15 +47,16 @@ const sharedOptions = {
     typescript: {
       onlyRemoveTypeImports: false,
     },
+    define: mapValues(
+      {
+        IS_FIREFOX_ENV: isFirefoxEnv,
+        IS_DEV: isDev,
+        IS_PROD: !isDev,
+      },
+      (v) => JSON.stringify(v),
+    ),
+    dropLabels: [],
   },
-  define: mapValues(
-    {
-      IS_FIREFOX_ENV: isFirefoxEnv,
-      IS_DEV: isDev,
-      IS_PROD: !isDev,
-    },
-    (v) => JSON.stringify(v),
-  ),
   resolve: {
     // https://webpack.js.org/configuration/resolve/#resolvealias
     alias: {
@@ -249,6 +251,16 @@ const buildOptions = [
               source: globalRulesRoot.toResult().css,
             })
 
+            this.addWatchFile(r('scripts/gen-manifest.ts'))
+            const manifest = (
+              await import('./gen-manifest.ts' + `?t=${Date.now()}`)
+            ).generateManifest()
+            this.emitFile({
+              type: 'asset',
+              fileName: 'manifest.json',
+              source: JSON.stringify(manifest, null, 2),
+            })
+
             const templateHtml = await this.fs.readFile(
               r('src/pages/index.html'),
               { encoding: 'utf8' },
@@ -282,10 +294,6 @@ const buildOptions = [
     ],
   },
 ]
-
-function writeManifest() {
-  exec('node ./scripts/gen-manifest.ts')
-}
 
 /**
  * @param {RolldownOutput[]} results
@@ -365,7 +373,6 @@ function logBuildResult(results) {
 
 fsExtra.ensureDirSync(outDir)
 fsExtra.emptyDirSync(outDir)
-writeManifest()
 
 if (isDev) {
   const watcher = watch(buildOptions)
@@ -400,10 +407,6 @@ if (isDev) {
       styleText('green', change.event),
       e.slice(cwd.length + 1),
     )
-  })
-
-  fsExtra.watchFile(r('scripts/gen-manifest.ts'), () => {
-    writeManifest()
   })
 } else {
   // TODO: generate metadata.json to analyze the bundle

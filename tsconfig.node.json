@@ -9,6 +9,8 @@
     "checkJs": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "exactOptionalPropertyTypes": false,
     "erasableSyntaxOnly": true,
     "types": [
