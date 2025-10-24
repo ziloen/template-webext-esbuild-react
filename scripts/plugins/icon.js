@@ -1,4 +1,4 @@
-import { transform as svgrTransform } from '@svgr/core'
+import { transform } from '@svgr/core'
 import jsx from '@svgr/plugin-jsx'
 import { ensureFile } from 'fs-extra'
 import { glob } from 'node:fs/promises'
@@ -93,10 +93,9 @@ export default function SvgIcon(optiopns) {
         // ~icons
         if (id === resolvedModuleId) {
           const exports = Array.from(iconPathMap.keys())
-            .map(
-              (iconName) =>
-                `export { default as ${iconName} } from "${subModulePrefix}${iconName}";`,
-            )
+            .map((name) => {
+              return `export { default as ${name} } from '${subModulePrefix}${name}'`
+            })
             .join('\n')
 
           return {
@@ -108,18 +107,18 @@ export default function SvgIcon(optiopns) {
 
         // ~icons:IconName
         if (id.startsWith(resolvedSubModulePrefix)) {
-          const iconName = id.slice(resolvedSubModulePrefix.length)
-          const iconPath = iconPathMap.get(iconName)
+          const name = id.slice(resolvedSubModulePrefix.length)
+          const filePath = iconPathMap.get(name)
 
-          if (!iconPath) {
-            throw new Error(`Icon "${iconName}" not found.`)
+          if (!filePath) {
+            throw new Error(`Icon "${name}" not found.`)
           }
 
-          this.addWatchFile(iconPath)
+          this.addWatchFile(filePath)
 
-          const svg = await this.fs.readFile(iconPath, { encoding: 'utf8' })
+          const svg = await this.fs.readFile(filePath, { encoding: 'utf8' })
 
-          const componentCode = await svgrTransform(
+          const componentCode = await transform(
             svg,
             {
               plugins: [jsx],
@@ -130,8 +129,8 @@ export default function SvgIcon(optiopns) {
               svgo: false,
             },
             {
-              componentName: iconName,
-              filePath: iconPath,
+              componentName: name,
+              filePath: filePath,
             },
           ).catch(() => 'export default () => null')
 
