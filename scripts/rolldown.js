@@ -7,6 +7,7 @@ import { createRequire } from 'node:module'
 import path from 'node:path'
 import { styleText } from 'node:util'
 import postcss from 'postcss'
+import postcssPresetEnv from 'postcss-preset-env'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
@@ -106,7 +107,7 @@ const sharedOptions = {
         handler(code, id, meta) {
           // FIXME: tailwind 运行了两次？
           // TODO: support css modules
-          return postcss([tailwindcss])
+          return postcss([tailwindcss, postcssPresetEnv({ browsers: target })])
             .process(code, {
               from: id,
               to: id,
