@@ -2,7 +2,6 @@ import { babel } from '@rollup/plugin-babel'
 import tailwindcss from '@tailwindcss/postcss'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
 import { mapValues } from 'es-toolkit'
-import fsExtra from 'fs-extra'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { styleText } from 'node:util'
@@ -34,7 +33,8 @@ const _require = createRequire(import.meta.url)
 const sharedOptions = {
   platform: 'browser',
   output: {
-    // FIXME: clean 会导致 copy 插件失效
+    // FIXME: clean: true 会导致 copy 插件的文件被删除
+    // https://github.com/rolldown/rolldown/issues/6733
     cleanDir: false,
     dir: outDir,
     legalComments: 'inline',
@@ -210,6 +210,7 @@ const buildOptions = [
     },
     output: {
       ...sharedOptions.output,
+      cleanDir: true,
       format: 'iife',
     },
   },
@@ -371,9 +372,6 @@ function logBuildResult(results) {
     styleText('white', totalText),
   )
 }
-
-fsExtra.ensureDirSync(outDir)
-fsExtra.emptyDirSync(outDir)
 
 if (isDev) {
   const watcher = watch(buildOptions)
