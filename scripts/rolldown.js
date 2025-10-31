@@ -42,6 +42,7 @@ const sharedOptions = {
     hashCharacters: 'hex',
     assetFileNames: 'assets/[name].[hash][extname]',
     chunkFileNames: 'assets/[name].[hash].js',
+    minify: !isDev,
   },
   transform: {
     target: browserslistToEsbuild(target),
