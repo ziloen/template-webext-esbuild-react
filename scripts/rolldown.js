@@ -108,7 +108,16 @@ const sharedOptions = {
         handler(code, id, meta) {
           // FIXME: tailwind 运行了两次？
           // TODO: support css modules
-          return postcss([tailwindcss, postcssPresetEnv({ browsers: target })])
+          return postcss([
+            tailwindcss,
+            postcssPresetEnv({
+              browsers: target,
+              features: {
+                // `@layer` polyfill 会生成奇怪的 `:not(#\#)` 选择器，导致部分样式无法生效
+                'cascade-layers': false,
+              },
+            }),
+          ])
             .process(code, {
               from: id,
               to: id,
@@ -218,6 +227,7 @@ const buildOptions = [
   {
     ...sharedOptions,
     input: {
+      // TODO: 使用 advancedChunks 来直接提取 common.css
       common: r('src/styles/common.css'),
       'content-scripts/main': r('src/content-scripts/main.tsx'),
       'background/main': r('src/background/main.ts'),
