@@ -1,9 +1,4 @@
-import { transform } from '@babel/core'
 import { valueToNode } from '@babel/types'
-import fs from 'node:fs/promises'
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
 
 /**
  * @import { TransformOptions } from "@babel/core"
@@ -74,10 +69,6 @@ export const PURE_CALLS = {
   ],
 }
 
-/**
- * This plugin is used to mark some function calls as pure, so that they can be removed by the minifier.
- * @returns {import('esbuild').Plugin}
- */
 export function BabelPlugin() {
   /** @type {TransformOptions} */
   const config = {
@@ -112,42 +103,13 @@ export function BabelPlugin() {
               classNames.push(arg.node.value)
             }
 
-            const clsx = require('clsx')
+            // const clsx = require('clsx')
 
-            path.replaceWith(valueToNode(clsx(classNames)))
+            // path.replaceWith(valueToNode(clsx(classNames)))
           },
         },
       },
     ],
-  }
-
-  /**
-   * @param {string} code
-   * @returns {Promise<string>}
-   */
-  function transformContents(code) {
-    return new Promise((resolve, reject) => {
-      transform(code, config, (err, result) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(/** @type **/ (result).code)
-        }
-      })
-    })
-  }
-
-  return {
-    name: 'babel',
-    setup(build) {
-      build.onLoad({ filter: /\.tsx?$/ }, async (args) => {
-        const code = await fs.readFile(args.path, 'utf-8')
-        return {
-          contents: await transformContents(code),
-          loader: args.path.endsWith('x') ? 'tsx' : 'ts',
-        }
-      })
-    },
   }
 }
 
