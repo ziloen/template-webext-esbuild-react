@@ -263,11 +263,10 @@ const buildOptions = [
           })
 
           // Generate manifest.json
-          this.addWatchFile(r('scripts/gen-manifest.ts'))
+          this.addWatchFile(r('scripts/manifest.ts'))
 
-          const manifest = (
-            await import('./gen-manifest.ts' + `?t=${Date.now()}`)
-          ).generateManifest()
+          const manifest = (await import(`./manifest.ts?t=${Date.now()}`))
+            .default
 
           this.emitFile({
             type: 'asset',
