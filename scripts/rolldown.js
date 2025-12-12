@@ -251,6 +251,9 @@ const buildOptions = [
       }),
       {
         name: 'emit-extra-files',
+        buildStart() {
+          this.addWatchFile(r('scripts/manifest.ts'))
+        },
         async generateBundle(outputOptions, bundle, isWrite) {
           // Remove unused assets
           delete bundle['common.js']
@@ -263,7 +266,6 @@ const buildOptions = [
           })
 
           // Generate manifest.json
-          this.addWatchFile(r('scripts/manifest.ts'))
 
           const manifest = (await import(`./manifest.ts?t=${Date.now()}`))
             .default
