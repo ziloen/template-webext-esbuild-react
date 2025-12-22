@@ -1,27 +1,16 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "./",
-    "composite": true,
-    "outDir": "dist",
-    // https://github.com/microsoft/TypeScript/pull/49886
     "esModuleInterop": true,
-    "target": "ESNext",
-    "strict": true,
-    "alwaysStrict": true,
     "jsx": "react-jsx",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "exactOptionalPropertyTypes": true,
     "erasableSyntaxOnly": false,
     "noImplicitAny": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
-    "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "stripInternal": true,
     "skipDefaultLibCheck": true,
@@ -38,17 +27,9 @@
     "types": [
       "chrome",
     ],
-    "paths": {
-      "~/*": [
-        "./src/*"
-      ],
-      "~cwd/*": [
-        "./*"
-      ],
-    },
   },
   "include": [
-    "src"
+    "src",
   ],
   "exclude": [
     "dist",

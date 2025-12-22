@@ -23,7 +23,7 @@
     "console"
   ],
   "prettier.enable": true,
-  "typescript.experimental.useTsgo": true,
+  "typescript.experimental.useTsgo": false,
   "typescript.preferences.autoImportSpecifierExcludeRegexes": [
     "node:console",
     "console"

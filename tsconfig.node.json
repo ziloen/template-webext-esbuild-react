@@ -1,16 +1,15 @@
 {
-  "extends": "./tsconfig.app.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "./",
-    "composite": true,
     "allowJs": true,
     "checkJs": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
     "exactOptionalPropertyTypes": false,
-    "erasableSyntaxOnly": true,
+    "noEmit": true, // Don't generate .js files
+    "erasableSyntaxOnly": true, // Only allow syntax that node can strip out
+    "allowImportingTsExtensions": true, // Allow importing .ts files
+    "verbatimModuleSyntax": true, // `import type` for type-only imports
     "types": [
       "node"
     ],

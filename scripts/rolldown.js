@@ -166,11 +166,12 @@ const sharedOptions = {
     },
 
     // FIXME: use filter to exclude node_modules
-    // TODO: is it possible to transform after jsx and typescript compilation?
+    // TODO: is it possible to transform after jsx and typescript compilation? use renderChunk?
     babel({
       babelHelpers: 'bundled',
       configFile: false,
       babelrc: false,
+      cloneInputAst: false,
       skipPreflightCheck: true,
       parserOpts: {
         plugins: ['jsx', 'typescript'],
@@ -266,7 +267,6 @@ const buildOptions = [
           })
 
           // Generate manifest.json
-
           const manifest = (await import(`./manifest.ts?t=${Date.now()}`))
             .default
 
