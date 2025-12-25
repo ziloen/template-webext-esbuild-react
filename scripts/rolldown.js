@@ -59,10 +59,10 @@ const sharedOptions = {
     ),
     dropLabels: [],
   },
+  tsconfig: r('tsconfig.json'),
   resolve: {
     // https://webpack.js.org/configuration/resolve/#resolvealias
     alias: {
-      '~/*': r('src/*'),
       '~ext-root$': `${extensionProtocol}__MSG_@@extension_id__`,
     },
   },
