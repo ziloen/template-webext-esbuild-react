@@ -5,6 +5,7 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     // Type checking
