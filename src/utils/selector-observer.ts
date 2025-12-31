@@ -1,3 +1,5 @@
+// 参考 SentinelJS 和 refined-github 的实现
+
 const animationName = `observe-${crypto.randomUUID()}`
 
 let registered = false
