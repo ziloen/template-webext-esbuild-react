@@ -229,9 +229,9 @@ const buildOptions = [
       // TODO: 使用 advancedChunks 来直接提取 common.css
       common: r('src/styles/common.css'),
       'content-scripts/main': r('src/content-scripts/main.tsx'),
-      'background/main': r('src/background/main.ts'),
-      'devtools/main': r('src/devtools/main.ts'),
-      'pages/devtools-panel/main': r('src/pages/devtools-panel/main.tsx'),
+      background: r('src/background/background.ts'),
+      'devtools/devtools': r('src/devtools/devtools.ts'),
+      'pages/devtools/main': r('src/pages/devtools/main.tsx'),
       'pages/options/main': r('src/pages/options/main.tsx'),
       'pages/popup/main': r('src/pages/popup/main.tsx'),
       'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),

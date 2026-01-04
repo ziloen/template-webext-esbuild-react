@@ -33,8 +33,8 @@ const manifest: MV3 = {
   description: '__MSG_extensionDescription__',
   default_locale: 'en',
   background: isFirefoxEnv
-    ? { scripts: ['./background/main.js'], type: 'module' }
-    : { service_worker: './background/main.js', type: 'module' },
+    ? { scripts: ['./background.js'], type: 'module' }
+    : { service_worker: './background.js', type: 'module' },
   permissions: ['sidePanel'],
   optional_permissions: [],
 
