@@ -76,7 +76,12 @@ const sharedOptions = {
     '.woff2': 'asset',
   },
   optimization: {
-    inlineConst: !isDev,
+    inlineConst: isDev
+      ? false
+      : {
+          mode: 'smart',
+          pass: 3,
+        },
   },
   treeshake: {
     manualPureFunctions: pureFunctions,
@@ -89,7 +94,7 @@ const sharedOptions = {
   },
   logLevel: 'info',
   experimental: {
-    attachDebugInfo: 'none',
+    attachDebugInfo: isDev ? 'full' : 'none',
     nativeMagicString: true,
   },
   plugins: [
@@ -214,13 +219,12 @@ const sharedOptions = {
 const buildOptions = [
   {
     ...sharedOptions,
-    input: {
-      'content-scripts/start': r('src/content-scripts/start.ts'),
-    },
+    input: { 'content-scripts/start': r('src/content-scripts/start.ts') },
     output: {
       ...sharedOptions.output,
       cleanDir: true,
-      format: 'iife',
+      format: 'esm',
+      inlineDynamicImports: true,
     },
   },
   {
