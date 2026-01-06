@@ -27,28 +27,17 @@ const extensionProtocol = isFirefoxEnv
 const globalRulesRoot = postcss.root()
 const _require = createRequire(import.meta.url)
 
+// FIXME: 多个 input config 会导致共用的 asset 被重复打包多次
+// 例如如果有多个 entry 都 import 了 a.png，那么 a.png 会被打包多次 a.hash1.png, a.hash2.png
+// TODO: 支持 sass 文件
+// TODO: 支持 在同一个 config 下部分 entry 使用单文件形式（不分包）
 /**
- * @satisfies {RolldownOptions}
+ * @type {BuildOptions}
  */
-const sharedOptions = {
+const buildOptions = {
   platform: 'browser',
-  output: {
-    // FIXME: clean: true 会导致 copy 插件的文件被删除
-    // https://github.com/rolldown/rolldown/issues/6733
-    cleanDir: false,
-    dir: outDir,
-    legalComments: 'inline',
-    sourcemap: isDev ? 'inline' : false,
-    hashCharacters: 'hex',
-    assetFileNames: 'assets/[name].[hash][extname]',
-    chunkFileNames: 'assets/[name].[hash].js',
-    minify: !isDev,
-  },
   transform: {
     target: browserslistToEsbuild(target),
-    typescript: {
-      onlyRemoveTypeImports: false,
-    },
     define: mapValues(
       {
         IS_FIREFOX_ENV: isFirefoxEnv,
@@ -96,6 +85,32 @@ const sharedOptions = {
   experimental: {
     attachDebugInfo: isDev ? 'full' : 'none',
     nativeMagicString: true,
+  },
+
+  input: {
+    // TODO: 使用 advancedChunks 来直接提取 common.css
+    background: r('src/background/background.ts'),
+    common: r('src/styles/common.css'),
+    'content-scripts/main': r('src/content-scripts/main.tsx'),
+    'content-scripts/start': r('src/content-scripts/start.ts'),
+    'devtools/devtools': r('src/devtools/devtools.ts'),
+    'pages/devtools/main': r('src/pages/devtools/main.tsx'),
+    'pages/options/main': r('src/pages/options/main.tsx'),
+    'pages/popup/main': r('src/pages/popup/main.tsx'),
+    'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
+  },
+  output: {
+    format: 'esm',
+    // FIXME: clean: true 会导致 copy 插件的文件被删除
+    // https://github.com/rolldown/rolldown/issues/6733
+    cleanDir: false,
+    dir: outDir,
+    legalComments: 'inline',
+    sourcemap: isDev ? 'inline' : false,
+    hashCharacters: 'hex',
+    assetFileNames: 'assets/[name].[hash][extname]',
+    chunkFileNames: 'assets/[name].[hash].js',
+    minify: !isDev,
   },
   plugins: [
     // Sonda(),
@@ -210,118 +225,76 @@ const sharedOptions = {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       exclude: /node_modules/,
     }),
+    copy({
+      cwd: cwd,
+      flatten: false,
+      targets: [
+        { src: 'public/**/*', dest: outDir },
+        { src: 'src/devtools/index.html', dest: outDir },
+      ],
+    }),
+    {
+      name: 'emit-extra-files',
+      buildStart() {
+        this.addWatchFile(r('scripts/manifest.ts'))
+      },
+      async generateBundle(outputOptions, bundle, isWrite) {
+        // Remove unused assets
+        delete bundle['common.js']
+
+        // Emit global-rules.css
+        this.emitFile({
+          type: 'asset',
+          fileName: 'global-rules.css',
+          source: globalRulesRoot.toResult().css,
+        })
+
+        // Generate manifest.json
+        const manifest = (await import(`./manifest.ts?t=${Date.now()}`)).default
+
+        this.emitFile({
+          type: 'asset',
+          fileName: 'manifest.json',
+          source: JSON.stringify(manifest, null, 2),
+        })
+
+        // Generate HTML files for each page
+        const templateHtml = await this.fs.readFile(r('src/pages/index.html'), {
+          encoding: 'utf8',
+        })
+
+        for (const [fileName, chunk] of Object.entries(bundle)) {
+          if (chunk.type !== 'chunk' || !chunk.isEntry) continue
+          if (!fileName.startsWith('pages/')) continue
+
+          const htmlName = path.posix.join(path.dirname(fileName), 'index.html')
+
+          const htmlCode = templateHtml.replace(
+            '__MAIN_SCRIPT__',
+            `./${path.basename(fileName)}`,
+          )
+
+          this.emitFile({
+            type: 'asset',
+            fileName: htmlName,
+            source: htmlCode,
+            name: 'index.html',
+          })
+        }
+      },
+    },
   ],
 }
 
 /**
- * @type {BuildOptions[]}
- */
-const buildOptions = [
-  {
-    ...sharedOptions,
-    input: { 'content-scripts/start': r('src/content-scripts/start.ts') },
-    output: {
-      ...sharedOptions.output,
-      cleanDir: true,
-      format: 'esm',
-      inlineDynamicImports: true,
-    },
-  },
-  {
-    ...sharedOptions,
-    input: {
-      // TODO: 使用 advancedChunks 来直接提取 common.css
-      common: r('src/styles/common.css'),
-      'content-scripts/main': r('src/content-scripts/main.tsx'),
-      background: r('src/background/background.ts'),
-      'devtools/devtools': r('src/devtools/devtools.ts'),
-      'pages/devtools/main': r('src/pages/devtools/main.tsx'),
-      'pages/options/main': r('src/pages/options/main.tsx'),
-      'pages/popup/main': r('src/pages/popup/main.tsx'),
-      'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
-    },
-    output: {
-      ...sharedOptions.output,
-      format: 'esm',
-    },
-    plugins: [
-      ...sharedOptions.plugins,
-      copy({
-        cwd: cwd,
-        flatten: false,
-        targets: [
-          { src: 'public/**/*', dest: outDir },
-          { src: 'src/devtools/index.html', dest: outDir },
-        ],
-      }),
-      {
-        name: 'emit-extra-files',
-        buildStart() {
-          this.addWatchFile(r('scripts/manifest.ts'))
-        },
-        async generateBundle(outputOptions, bundle, isWrite) {
-          // Remove unused assets
-          delete bundle['common.js']
-
-          // Emit global-rules.css
-          this.emitFile({
-            type: 'asset',
-            fileName: 'global-rules.css',
-            source: globalRulesRoot.toResult().css,
-          })
-
-          // Generate manifest.json
-          const manifest = (await import(`./manifest.ts?t=${Date.now()}`))
-            .default
-
-          this.emitFile({
-            type: 'asset',
-            fileName: 'manifest.json',
-            source: JSON.stringify(manifest, null, 2),
-          })
-
-          // Generate HTML files for each page
-          const templateHtml = await this.fs.readFile(
-            r('src/pages/index.html'),
-            { encoding: 'utf8' },
-          )
-
-          for (const [fileName, chunk] of Object.entries(bundle)) {
-            if (chunk.type !== 'chunk' || !chunk.isEntry) continue
-            if (!fileName.startsWith('pages/')) continue
-
-            const htmlName = path.posix.join(
-              path.dirname(fileName),
-              'index.html',
-            )
-
-            const htmlCode = templateHtml.replace(
-              '__MAIN_SCRIPT__',
-              `./${path.basename(fileName)}`,
-            )
-
-            this.emitFile({
-              type: 'asset',
-              fileName: htmlName,
-              source: htmlCode,
-              name: 'index.html',
-            })
-          }
-        },
-      },
-    ],
-  },
-]
-
-/**
- * @param {RolldownOutput[]} results
+ * @param {RolldownOutput | RolldownOutput[]} results
  */
 function logBuildResult(results) {
   let totalSize = 0
   let longestFileName = 0
   let longestSizeText = 0
 
-  const outputs = results
+  const outputs = (Array.isArray(results) ? results : [results])
     .flatMap((result) => {
       return result.output.map((out) => {
         const content = out.type === 'chunk' ? out.code : out.source

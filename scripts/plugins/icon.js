@@ -1,5 +1,5 @@
 import { transform } from '@svgr/core'
-import jsx from '@svgr/plugin-jsx'
+import jsxPlugin from '@svgr/plugin-jsx'
 import { ensureFile } from 'fs-extra'
 import { glob } from 'node:fs/promises'
 import path from 'node:path'
@@ -121,7 +121,7 @@ export default function SvgIcon(optiopns) {
           const componentCode = await transform(
             svg,
             {
-              plugins: [jsx],
+              plugins: [jsxPlugin],
               jsxRuntime: 'automatic',
               exportType: 'default',
               icon: false,

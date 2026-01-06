@@ -1,13 +1,13 @@
-import Browser from 'webextension-polyfill'
+const browser = globalThis.browser ?? globalThis.chrome
 
 if (document.readyState === 'loading') {
   window.addEventListener(
     'DOMContentLoaded',
     () => {
-      import(Browser.runtime.getURL('content-scripts/main.js'))
+      import(browser.runtime.getURL('content-scripts/main.js'))
     },
     { once: true },
   )
 } else {
-  import(Browser.runtime.getURL('content-scripts/main.js'))
+  import(browser.runtime.getURL('content-scripts/main.js'))
 }
