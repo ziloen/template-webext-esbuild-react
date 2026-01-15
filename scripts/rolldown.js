@@ -19,7 +19,7 @@ import { formatBytes, isDev, isFirefoxEnv, outDir, r } from './utils.js'
  */
 
 const cwd = process.cwd()
-const target = '> 0.5%, last 2 versions, Firefox ESR, not dead'
+const target = 'baseline widely available with downstream'
 const extensionProtocol = isFirefoxEnv
   ? 'moz-extension://'
   : 'chrome-extension://'
@@ -48,7 +48,6 @@ const buildOptions = {
     ),
     dropLabels: [],
   },
-  tsconfig: r('tsconfig.json'),
   resolve: {
     // https://webpack.js.org/configuration/resolve/#resolvealias
     alias: {
@@ -128,16 +127,7 @@ const buildOptions = {
         handler(code, id, meta) {
           // FIXME: tailwind 运行了两次？
           // TODO: support css modules
-          return postcss([
-            tailwindcss,
-            postcssPresetEnv({
-              browsers: target,
-              features: {
-                // 不要将 `@layer` 转换为奇怪的 `:not(#\#)` 选择器
-                'cascade-layers': false,
-              },
-            }),
-          ])
+          return postcss([tailwindcss, postcssPresetEnv({ browsers: target })])
             .process(code, {
               from: id,
               to: id,
