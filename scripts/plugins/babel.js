@@ -10,7 +10,7 @@ export const PURE_CALLS = {
   classnames: ['default'],
   clsx: ['default', 'clsx'],
   'clsx/lite': ['default', 'clsx'],
-  'es-toolkit': ['mapValues'],
+  'es-toolkit': ['mapValues', 'noop'],
   'lodash-es': [
     'clamp',
     'clone',
@@ -25,7 +25,6 @@ export const PURE_CALLS = {
     'isFunction',
     'isNil',
     'isPlainObject',
-    'memoize',
     'memoize',
     'noop',
     'pickBy',

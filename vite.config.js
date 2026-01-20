@@ -1,0 +1,53 @@
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import genGlobalCss from './scripts/plugins/gen-global-css.js'
+import genManifest from './scripts/plugins/gen-manifest.js'
+import { outDir, r } from './scripts/utils.js'
+
+const cwd = process.cwd()
+const target = 'baseline widely available with downstream'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss({ optimize: true }),
+    genManifest(r('scripts/manifest.ts')),
+    genGlobalCss(),
+  ],
+  build: {
+    outDir,
+    emptyOutDir: true,
+    assetsInlineLimit: 0,
+    reportCompressedSize: false,
+    rolldownOptions: {
+      input: {
+        background: r('src/background/background.ts'),
+        common: r('src/styles/common.css'),
+        'content-scripts/main': r('src/content-scripts/main.tsx'),
+        'content-scripts/start': r('src/content-scripts/start.ts'),
+        'devtools/devtools': r('src/devtools/devtools.ts'),
+        'pages/devtools/main': r('src/pages/devtools/main.tsx'),
+        'pages/options/main': r('src/pages/options/main.tsx'),
+        'pages/popup/main': r('src/pages/popup/main.tsx'),
+        'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
+      },
+      output: {
+        hashCharacters: 'hex',
+        entryFileNames: '[name].js',
+        cssEntryFileNames: '[name].css',
+        assetFileNames: () => {
+          return 'assets/[name][extname]'
+        },
+      },
+    },
+  },
+  css: {
+    transformer: 'lightningcss',
+    devSourcemap: true,
+    modules: {},
+  },
+  experimental: {
+    enableNativePlugin: true,
+  },
+})

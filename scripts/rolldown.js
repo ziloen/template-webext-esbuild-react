@@ -3,28 +3,32 @@ import tailwindcss from '@tailwindcss/postcss'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
 import { mapValues } from 'es-toolkit'
 import { createRequire } from 'node:module'
-import path from 'node:path'
 import { styleText } from 'node:util'
 import postcss from 'postcss'
 import postcssPresetEnv from 'postcss-preset-env'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
+import genGlobalCss from './plugins/gen-global-css.js'
+import genHtml from './plugins/gen-html.js'
+import genManifest from './plugins/gen-manifest.js'
 import ImportSuffix from './plugins/import-suffix.js'
-import { formatBytes, isDev, isFirefoxEnv, outDir, r } from './utils.js'
+import {
+  extProtocol,
+  formatBytes,
+  isDev,
+  isFirefoxEnv,
+  outDir,
+  r,
+} from './utils.js'
 
 /**
- * @import { RolldownOptions, BuildOptions, OutputAsset, OutputChunk, RolldownOutput } from "rolldown"
- * @import { TransformCallback } from "postcss"
+ * @import { BuildOptions, RolldownOutput } from "rolldown"
  */
 
 const cwd = process.cwd()
 const target = 'baseline widely available with downstream'
-const extensionProtocol = isFirefoxEnv
-  ? 'moz-extension://'
-  : 'chrome-extension://'
 
-const globalRulesRoot = postcss.root()
 const _require = createRequire(import.meta.url)
 
 // FIXME: 多个 input config 会导致共用的 asset 被重复打包多次
@@ -51,7 +55,7 @@ const buildOptions = {
   resolve: {
     // https://webpack.js.org/configuration/resolve/#resolvealias
     alias: {
-      '~ext-root$': `${extensionProtocol}__MSG_@@extension_id__`,
+      '~ext-root$': `${extProtocol}__MSG_@@extension_id__`,
     },
   },
   external: [
@@ -139,40 +143,6 @@ const buildOptions = {
             }))
         },
       },
-      async generateBundle(outputOptions, bundle, isWrite) {
-        for (const [fileName, chunk] of Object.entries(bundle)) {
-          if (!fileName.endsWith('.css')) continue
-
-          const code =
-            chunk.type === 'chunk'
-              ? chunk.code
-              : /** @type {string} */ (chunk.source)
-
-          const result = postcss.parse(code)
-
-          // Add prefix to all URLs in src attributes
-          result.walkDecls('src', (decl, index) => {
-            if (decl.value.startsWith('url(assets/')) {
-              decl.value =
-                `url(${extensionProtocol}__MSG_@@extension_id__/` +
-                decl.value.slice(4)
-            }
-          })
-
-          result.walkAtRules(/^(?:property|font-face)$/, (atRule) => {
-            atRule.remove()
-            globalRulesRoot.append(atRule.clone())
-          })
-
-          const newCode = result.toResult().css
-
-          if (chunk.type === 'chunk') {
-            chunk.code = newCode
-          } else {
-            chunk.source = newCode
-          }
-        }
-      },
     },
 
     // FIXME: use filter to exclude node_modules
@@ -223,56 +193,9 @@ const buildOptions = {
         { src: 'src/devtools/index.html', dest: outDir },
       ],
     }),
-    {
-      name: 'emit-extra-files',
-      buildStart() {
-        this.addWatchFile(r('scripts/manifest.ts'))
-      },
-      async generateBundle(outputOptions, bundle, isWrite) {
-        // Remove unused assets
-        delete bundle['common.js']
-
-        // Emit global-rules.css
-        this.emitFile({
-          type: 'asset',
-          fileName: 'global-rules.css',
-          source: globalRulesRoot.toResult().css,
-        })
-
-        // Generate manifest.json
-        const manifest = (await import(`./manifest.ts?t=${Date.now()}`)).default
-
-        this.emitFile({
-          type: 'asset',
-          fileName: 'manifest.json',
-          source: JSON.stringify(manifest, null, 2),
-        })
-
-        // Generate HTML files for each page
-        const templateHtml = await this.fs.readFile(r('src/pages/index.html'), {
-          encoding: 'utf8',
-        })
-
-        for (const [fileName, chunk] of Object.entries(bundle)) {
-          if (chunk.type !== 'chunk' || !chunk.isEntry) continue
-          if (!fileName.startsWith('pages/')) continue
-
-          const htmlName = path.posix.join(path.dirname(fileName), 'index.html')
-
-          const htmlCode = templateHtml.replace(
-            '__MAIN_SCRIPT__',
-            `./${path.basename(fileName)}`,
-          )
-
-          this.emitFile({
-            type: 'asset',
-            fileName: htmlName,
-            source: htmlCode,
-            name: 'index.html',
-          })
-        }
-      },
-    },
+    genManifest(r('scripts/manifest.ts')),
+    genGlobalCss(),
+    genHtml({ templateHtmlPath: r('src/pages/index.html') }),
   ],
 }
 

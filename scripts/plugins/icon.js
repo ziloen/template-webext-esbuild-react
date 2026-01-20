@@ -20,9 +20,9 @@ const iconPathMap = new Map()
 
 /**
  * @typedef {Object} PluginOptions
- * @property {string} [iconNamePrefix="Icon"] - Prefix for icon names
- * @property {string} [iconDir="src/icons"] - Directory containing SVG icons
- * @property {string} [dtsPath="src/types/icons.d.ts"] - Path for the generated TypeScript declaration file
+ * @property {string} [iconNamePrefix="Icon"] Prefix for icon names
+ * @property {string} [iconDir="src/icons"] Directory containing SVG icons
+ * @property {string} [dtsPath="src/types/icons.d.ts"] Path for the generated TypeScript declaration file
  */
 
 /**

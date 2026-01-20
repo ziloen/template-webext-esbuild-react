@@ -1,5 +1,5 @@
 import type { Manifest } from 'webextension-polyfill'
-import { commitShortHash, isCI, isFirefoxEnv } from './utils.js'
+import { commitShortHash, isCI, isDev, isFirefoxEnv } from './utils.js'
 
 type ChromiumPermissions = 'sidePanel'
 type Permissions =
@@ -67,6 +67,12 @@ const manifest: MV3 = {
       matches: ['<all_urls>'],
     },
   ],
+}
+
+if (isDev) {
+  manifest.content_security_policy = {
+    extension_pages: "script-src 'self' http://localhost:3000",
+  }
 }
 
 if (isFirefoxEnv) {
