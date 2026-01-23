@@ -7,7 +7,7 @@ import path from 'node:path'
 /**
  * @returns {Plugin}
  */
-export default function ImportSuffix() {
+export default function importSuffix() {
   const filter = /\?(?:url|raw|dataurl)$/
 
   return {

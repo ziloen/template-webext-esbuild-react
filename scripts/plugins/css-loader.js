@@ -1,6 +1,7 @@
-import { extProtocol } from '../utils.js'
-
+import tailwindcss from '@tailwindcss/postcss'
 import postcss from 'postcss'
+import postcssPresetEnv from 'postcss-preset-env'
+import { extProtocol, target } from '../utils.js'
 
 /**
  * @import { Plugin } from "rolldown"
@@ -9,11 +10,38 @@ import postcss from 'postcss'
 /**
  * @returns {Plugin}
  */
-export default function genGlobalCss() {
+export default function cssLoader() {
+  const processor = postcss([
+    tailwindcss,
+    postcssPresetEnv({ browsers: target }),
+  ])
   const globalRulesRoot = postcss.root()
 
   return {
-    name: 'gen-global-css',
+    name: 'css-loader',
+    transform: {
+      filter: {
+        id: {
+          include: /\.css$/,
+          exclude: /node_modules/,
+        },
+      },
+      order: 'post',
+      handler(code, id, meta) {
+        // FIXME: tailwind 运行了两次？
+        // TODO: support css modules
+        return processor
+          .process(code, {
+            from: id,
+            to: id,
+            map: false,
+          })
+          .then((result) => ({
+            code: result.css,
+            map: { mappings: '' },
+          }))
+      },
+    },
     async generateBundle(_, bundle) {
       for (const [fileName, chunkOrAsset] of Object.entries(bundle)) {
         if (!fileName.endsWith('.css')) continue

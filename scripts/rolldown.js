@@ -9,10 +9,10 @@ import postcssPresetEnv from 'postcss-preset-env'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
-import genGlobalCss from './plugins/gen-global-css.js'
+import cssLoader from './plugins/css-loader.js'
 import genHtml from './plugins/gen-html.js'
 import genManifest from './plugins/gen-manifest.js'
-import ImportSuffix from './plugins/import-suffix.js'
+import importSuffix from './plugins/import-suffix.js'
 import {
   extProtocol,
   formatBytes,
@@ -123,35 +123,6 @@ const buildOptions = {
     minify: !isDev,
   },
   plugins: [
-    // Sonda(),
-    ImportSuffix(),
-    {
-      name: 'process-css',
-      transform: {
-        filter: {
-          id: {
-            include: /\.css$/,
-            exclude: /node_modules/,
-          },
-        },
-        order: 'post',
-        handler(code, id, meta) {
-          // FIXME: tailwind 运行了两次？
-          // TODO: support css modules
-          return postcss([tailwindcss, postcssPresetEnv({ browsers: target })])
-            .process(code, {
-              from: id,
-              to: id,
-              map: false,
-            })
-            .then((result) => ({
-              code: result.css,
-              map: { mappings: '' },
-            }))
-        },
-      },
-    },
-
     // FIXME: use filter to exclude node_modules
     // TODO: is it possible to transform after jsx and typescript compilation? use renderChunk?
     babel({
@@ -200,8 +171,9 @@ const buildOptions = {
         { src: 'src/devtools/index.html', dest: outDir },
       ],
     }),
+    importSuffix(),
     genManifest(r('scripts/manifest.ts')),
-    genGlobalCss(),
+    cssLoader(),
     genHtml({ templateHtmlPath: r('src/pages/index.html') }),
   ],
 }

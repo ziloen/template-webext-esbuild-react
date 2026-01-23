@@ -21,6 +21,8 @@ export const commitShortHash = process.env.GITHUB_SHA?.slice(0, 7) ?? 'local'
 
 export const outDir = isFirefoxEnv ? r('dist/firefox') : r('dist/chrome')
 
+export const target = 'baseline widely available with downstream'
+
 export const extProtocol = isFirefoxEnv
   ? 'moz-extension://'
   : 'chrome-extension://'

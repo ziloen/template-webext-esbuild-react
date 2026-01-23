@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import genGlobalCss from './scripts/plugins/gen-global-css.js'
+import cssLoader from './scripts/plugins/css-loader.js'
 import genHtml from './scripts/plugins/gen-html.js'
 import genManifest from './scripts/plugins/gen-manifest.js'
 import { outDir, r } from './scripts/utils.js'
@@ -14,7 +14,7 @@ export default defineConfig({
     react(),
     tailwindcss({ optimize: true }),
     genManifest(r('scripts/manifest.ts')),
-    genGlobalCss(),
+    cssLoader(),
     genHtml({ templateHtmlPath: r('src/pages/index.html') }),
   ],
   build: {
