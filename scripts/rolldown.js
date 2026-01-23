@@ -51,6 +51,9 @@ const buildOptions = {
       (v) => JSON.stringify(v),
     ),
     dropLabels: [],
+    jsx: {
+      development: isDev,
+    },
   },
   resolve: {
     // https://webpack.js.org/configuration/resolve/#resolvealias
@@ -97,10 +100,10 @@ const buildOptions = {
     'content-scripts/main': r('src/content-scripts/main.tsx'),
     'content-scripts/start': r('src/content-scripts/start.ts'),
     'devtools/devtools': r('src/devtools/devtools.ts'),
-    'pages/devtools/main': r('src/pages/devtools/main.tsx'),
-    'pages/options/main': r('src/pages/options/main.tsx'),
-    'pages/popup/main': r('src/pages/popup/main.tsx'),
-    'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
+    'pages/devtools': r('src/pages/devtools/main.tsx'),
+    'pages/options': r('src/pages/options/main.tsx'),
+    'pages/popup': r('src/pages/popup/main.tsx'),
+    'pages/sidebar': r('src/pages/sidebar/main.tsx'),
   },
   output: {
     format: 'esm',

@@ -27,7 +27,10 @@ export default function genHtml(options) {
         if (chunk.type !== 'chunk' || !chunk.isEntry) continue
         if (!fileName.startsWith('pages/')) continue
 
-        const htmlName = path.posix.join(path.dirname(fileName), 'index.html')
+        const htmlName = path.posix.join(
+          path.dirname(fileName),
+          path.basename(fileName, path.extname(fileName)) + '.html',
+        )
 
         const htmlCode = templateHtml.replace(
           '__MAIN_SCRIPT__',

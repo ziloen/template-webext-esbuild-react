@@ -1,4 +1,4 @@
-import { extProtocol, r } from '../utils.js'
+import { extProtocol } from '../utils.js'
 
 import postcss from 'postcss'
 
@@ -47,7 +47,6 @@ export default function genGlobalCss() {
         }
       }
 
-      // Emit global-rules.css
       this.emitFile({
         type: 'asset',
         fileName: 'global-rules.css',

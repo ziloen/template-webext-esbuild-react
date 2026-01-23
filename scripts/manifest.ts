@@ -38,14 +38,14 @@ const manifest: MV3 = {
   permissions: ['sidePanel'],
   optional_permissions: [],
 
-  action: { default_popup: './pages/popup/index.html' },
+  action: { default_popup: './pages/popup.html' },
   // devtools_page: './devtools/index.html',
   options_ui: {
-    page: './pages/options/index.html',
+    page: './pages/options.html',
     open_in_tab: true,
   },
   side_panel: {
-    default_path: './pages/sidebar/index.html',
+    default_path: './pages/sidebar.html',
   },
   content_scripts: [
     {

@@ -2,6 +2,7 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import genGlobalCss from './scripts/plugins/gen-global-css.js'
+import genHtml from './scripts/plugins/gen-html.js'
 import genManifest from './scripts/plugins/gen-manifest.js'
 import { outDir, r } from './scripts/utils.js'
 
@@ -14,6 +15,7 @@ export default defineConfig({
     tailwindcss({ optimize: true }),
     genManifest(r('scripts/manifest.ts')),
     genGlobalCss(),
+    genHtml({ templateHtmlPath: r('src/pages/index.html') }),
   ],
   build: {
     outDir,
@@ -27,10 +29,12 @@ export default defineConfig({
         'content-scripts/main': r('src/content-scripts/main.tsx'),
         'content-scripts/start': r('src/content-scripts/start.ts'),
         'devtools/devtools': r('src/devtools/devtools.ts'),
-        'pages/devtools/main': r('src/pages/devtools/main.tsx'),
-        'pages/options/main': r('src/pages/options/main.tsx'),
-        'pages/popup/main': r('src/pages/popup/main.tsx'),
-        'pages/sidebar/main': r('src/pages/sidebar/main.tsx'),
+
+        // Pages
+        'pages/devtools': r('src/pages/devtools/main.tsx'),
+        'pages/options': r('src/pages/options/main.tsx'),
+        'pages/popup': r('src/pages/popup/main.tsx'),
+        'pages/sidebar': r('src/pages/sidebar/main.tsx'),
       },
       output: {
         hashCharacters: 'hex',
