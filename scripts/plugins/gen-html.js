@@ -27,15 +27,24 @@ export default function genHtml(options) {
         if (chunk.type !== 'chunk' || !chunk.isEntry) continue
         if (!fileName.startsWith('pages/')) continue
 
+        const entryName = path.basename(fileName, path.extname(fileName))
+
         const htmlName = path.posix.join(
-          path.dirname(fileName),
-          path.basename(fileName, path.extname(fileName)) + '.html',
+          path.posix.dirname(fileName),
+          entryName + '.html',
         )
 
-        const htmlCode = templateHtml.replace(
-          '__MAIN_SCRIPT__',
-          `./${path.basename(fileName)}`,
-        )
+        const htmlCode = templateHtml
+          .replace(
+            '<!-- __MAIN_SCRIPT__ -->',
+            `<script type="module" src="./${entryName}.js"></script>`,
+          )
+          .replace(
+            '<!-- __MAIN_CSS__ -->',
+            bundle[`${path.posix.dirname(fileName)}/${entryName}.css`]
+              ? `<link rel="stylesheet" href="./${entryName}.css">`
+              : '',
+          )
 
         this.emitFile({
           type: 'asset',

@@ -16,6 +16,7 @@ import ImportSuffix from './plugins/import-suffix.js'
 import {
   extProtocol,
   formatBytes,
+  isCI,
   isDev,
   isFirefoxEnv,
   outDir,
@@ -104,6 +105,9 @@ const buildOptions = {
     'pages/options': r('src/pages/options/main.tsx'),
     'pages/popup': r('src/pages/popup/main.tsx'),
     'pages/sidebar': r('src/pages/sidebar/main.tsx'),
+    ...((isCI || isDev) && {
+      'pages/test-page': r('src/pages/test-page/main.tsx'),
+    }),
   },
   output: {
     format: 'esm',
