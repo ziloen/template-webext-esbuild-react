@@ -1,4 +1,9 @@
+import { transformAsync } from '@babel/core'
+import presetEnv from '@babel/preset-env'
 import { valueToNode } from '@babel/types'
+import { difference } from 'es-toolkit'
+import { createRequire } from 'node:module'
+import { target } from '../utils.js'
 
 /**
  * @import { TransformOptions } from "@babel/core"
@@ -68,12 +73,37 @@ export const PURE_CALLS = {
   ],
 }
 
+/**
+ * @returns {import("rolldown").Plugin}
+ */
 export function BabelPlugin() {
+  const _require = createRequire(import.meta.url)
+
   /** @type {TransformOptions} */
   const config = {
-    parserOpts: {
-      plugins: ['jsx', 'typescript'],
-    },
+    babelrc: false,
+    configFile: false,
+    cloneInputAst: false,
+    browserslistConfigFile: false,
+    targets: target,
+    presets: [
+      [
+        presetEnv,
+        {
+          targets: target,
+          useBuiltIns: 'usage',
+          corejs: {
+            version: _require('core-js/package.json').version,
+            proposals: false,
+          },
+          shippedProposals: true,
+          ignoreBrowserslistConfig: true,
+          bugfixes: true,
+          loose: false,
+          modules: false,
+        },
+      ],
+    ],
     plugins: [
       [
         'babel-plugin-annotate-module-pure',
@@ -102,42 +132,62 @@ export function BabelPlugin() {
               classNames.push(arg.node.value)
             }
 
-            // const clsx = require('clsx')
+            const clsx = _require('clsx')
 
-            // path.replaceWith(valueToNode(clsx(classNames)))
+            path.replaceWith(valueToNode(clsx(classNames)))
           },
         },
       },
     ],
   }
+
+  return {
+    name: 'babel',
+    renderChunk: {
+      async handler(code, chunk, outputOptions, meta) {
+        const result = await transformAsync(code, config)
+
+        if (result) {
+          return {
+            code: result.code || '',
+            map: result.map,
+          }
+        }
+
+        return null
+      },
+    },
+  }
 }
 
 /** @type {string[]} */
-export const pureFunctions = [
-  'Array.from',
-  'Array.isArray',
-  'crypto.randomUUID',
-  'Date.now',
-  'decodeURI',
-  'decodeURIComponent',
-  'document.createElement',
-  'encodeURI',
-  'encodeURIComponent',
-  'Math.abs',
-  'Math.ceil',
-  'Math.floor',
-  'Math.max',
-  'Math.min',
-  'Math.pow',
-  'Math.random',
-  'Math.round',
-  'Number.isFinite',
-  'Number.isInteger',
-  'Number.isNaN',
-  'Object.entries',
-  'Object.hasOwn',
-  'Object.keys',
-  'Object.values',
-  'structuredClone',
-  'URLPattern',
-]
+export const pureFunctions = difference(
+  [
+    'Array.isArray',
+    'crypto.randomUUID',
+    'Date.now',
+    'decodeURI',
+    'decodeURIComponent',
+    'document.createElement',
+    'encodeURI',
+    'encodeURIComponent',
+    'Math.abs',
+    'Math.ceil',
+    'Math.floor',
+    'Math.max',
+    'Math.min',
+    'Math.pow',
+    'Math.random',
+    'Math.round',
+    'Number.isFinite',
+    'Number.isInteger',
+    'Number.isNaN',
+    'Object.hasOwn',
+    'Object.keys',
+    'Object.values',
+    'structuredClone',
+    'URLPattern',
+  ],
+  // 有些库会使用这些函数来产生副作用，不能算作纯函数
+  ['Array.from', 'Object.entries'],
+)

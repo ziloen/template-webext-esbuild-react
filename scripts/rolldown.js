@@ -1,11 +1,8 @@
 import { babel } from '@rollup/plugin-babel'
-import tailwindcss from '@tailwindcss/postcss'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
 import { mapValues } from 'es-toolkit'
 import { createRequire } from 'node:module'
 import { styleText } from 'node:util'
-import postcss from 'postcss'
-import postcssPresetEnv from 'postcss-preset-env'
 import { build, watch } from 'rolldown'
 import copy from 'rollup-plugin-copy'
 import { PURE_CALLS, pureFunctions } from './plugins/babel.js'
@@ -131,6 +128,7 @@ const buildOptions = {
       babelrc: false,
       cloneInputAst: false,
       skipPreflightCheck: true,
+      targets: target,
       parserOpts: {
         plugins: ['jsx', 'typescript'],
       },
