@@ -33,6 +33,13 @@
     all: initial;
   }
 
+  /* Chrome 会继承 ::selection 样式，重置 selection 样式，防止外部主题不一致导致看不清 */
+  /* background-color: revert 在 Chrome 中不起作用 */
+  ::selection {
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
   :host,
   :root {
     font-family: --theme(--font-noto-sans-sc);
@@ -48,7 +55,7 @@
     margin: 0;
   }
 
-  /* Chrome 会给所有 extension 页面注入如下 style，需要重置一下
+  /* Chrome 会给所有 extension 页面注入 style
       body {
         font-family: "Segoe UI", Tahoma, sans-serif;
         font-size: 75%;

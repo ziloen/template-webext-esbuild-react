@@ -89,6 +89,7 @@ const buildOptions = {
   experimental: {
     attachDebugInfo: isDev ? 'full' : 'none',
     nativeMagicString: true,
+    // lazyBarrel: true,
   },
 
   input: {
