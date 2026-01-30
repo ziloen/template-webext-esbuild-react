@@ -183,11 +183,9 @@ export const pureFunctions = difference(
     'Number.isInteger',
     'Number.isNaN',
     'Object.hasOwn',
-    'Object.keys',
-    'Object.values',
     'structuredClone',
     'URLPattern',
   ],
   // 有些库会使用这些函数来产生副作用，不能算作纯函数
-  ['Array.from', 'Object.entries'],
+  ['Array.from', 'Object.entries', 'Object.keys', 'Object.values'],
 )
