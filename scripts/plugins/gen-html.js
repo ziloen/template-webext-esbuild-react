@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { r } from '../utils.js'
+import { isDev, r } from '../utils.js'
 
 /**
  * @import { Plugin } from "rolldown"
@@ -34,6 +34,8 @@ export default function genHtml(options) {
           entryName + '.html',
         )
 
+        const suffix = isDev ? `?t=${Date.now()}` : ''
+
         const htmlCode = templateHtml
           .replace(
             '<!-- __MAIN_SCRIPT__ -->',
@@ -42,9 +44,10 @@ export default function genHtml(options) {
           .replace(
             '<!-- __MAIN_CSS__ -->',
             bundle[`${path.posix.dirname(fileName)}/${entryName}.css`]
-              ? `<link rel="stylesheet" href="./${entryName}.css">`
+              ? `<link rel="stylesheet" href="./${entryName}.css${suffix}">`
               : '',
           )
+          .replace('/common.css', `/common.css${suffix}`)
 
         this.emitFile({
           type: 'asset',
