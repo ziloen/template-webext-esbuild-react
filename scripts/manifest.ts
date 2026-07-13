@@ -11,6 +11,7 @@ type OptionalPermissions = Manifest.OptionalPermission
 type MV2Keys = 'browser_action' | 'user_scripts'
 
 type ChromiumManifest = {
+  message_serialization?: 'structured_clone'
   side_panel?: {
     default_path: string
   }
@@ -102,7 +103,10 @@ if (isFirefoxEnv) {
     manifest.permissions = manifest.permissions.filter((p) => p !== 'sidePanel')
   }
 } else {
-  manifest.minimum_chrome_version = '117'
+  // minimum Chrome version for support structured clone messaging
+  // https://developer.chrome.com/blog/structured-clone-messaging
+  manifest.minimum_chrome_version = '148'
+  manifest.message_serialization = 'structured_clone'
 
   if (manifest.sidebar_action) {
     manifest.side_panel = {
