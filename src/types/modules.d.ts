@@ -39,4 +39,10 @@ declare module 'webextension-polyfill' {
   }
 }
 
+declare global {
+  namespace chrome {
+    const sidebarAction: typeof import('webextension-polyfill').sidebarAction
+  }
+}
+
 export {}

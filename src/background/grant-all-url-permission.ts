@@ -16,7 +16,7 @@ export function grantAllUrlPermission() {
   })
 
   let permissionRequesting: Promise<any> | null = null
-  browser.action.onClicked.addListener((tab, info) => {
+  browser.action.onClicked.addListener((tab) => {
     if (permissionRequesting) return
     permissionRequesting = browser.permissions
       .request({ origins: ['<all_urls>'] })
