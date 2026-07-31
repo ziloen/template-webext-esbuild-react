@@ -25,6 +25,21 @@ export default defineConfig({
     cssLoader(),
     genHtml({ templateHtmlPath: r('src/pages/index.html') }),
     buildReporter(),
+    // https://github.com/vitejs/vite/issues/13952#issuecomment-2418064664
+    {
+      name: 'preload-remover',
+      configResolved(config) {
+        const i = config.plugins.findIndex(
+          (p) => p.name === 'native:import-analysis-build',
+        )
+
+        if (i === -1) {
+          return
+        }
+
+        ;/** @type {import("vite").Plugin[]} */ (config.plugins).splice(i, 1)
+      },
+    },
   ],
   define: {
     IS_FIREFOX_ENV: isFirefoxEnv,

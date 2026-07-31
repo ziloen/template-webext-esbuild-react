@@ -149,7 +149,6 @@ export function babel() {
       [
         presetEnv,
         /** @satisfies {import("@babel/preset-env").Options} */ ({
-          ignoreBrowserslistConfig: true,
           modules: false,
           debug: false,
           // Required by `loose: true` migration — excludes typeof-symbol transform.
