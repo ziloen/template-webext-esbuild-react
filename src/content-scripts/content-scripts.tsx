@@ -1,9 +1,8 @@
 import { createRoot } from 'react-dom/client'
-import Browser from 'webextension-polyfill'
 import { domReady } from '~/utils'
 import { App } from './App'
 
-Browser.runtime.onMessage.addListener(() => {
+browser.runtime.onMessage.addListener(() => {
   console.log('Hello from the content script!')
   return undefined
 })

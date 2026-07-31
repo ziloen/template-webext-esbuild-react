@@ -1,5 +1,4 @@
 import { sendMessage } from 'typed-webext'
-import Browser from 'webextension-polyfill'
 
 export default function App() {
   return (
@@ -10,7 +9,7 @@ export default function App() {
         className=""
         id="sidebar-btn"
         onClick={async () => {
-          const current = await Browser.tabs.getCurrent()
+          const current = await browser.tabs.getCurrent()
           if (!current) return
           if (!current.windowId) return
 

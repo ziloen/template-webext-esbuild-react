@@ -4,7 +4,7 @@ import presetEnv from '@babel/preset-env'
 import { stringLiteral } from '@babel/types'
 import babelPlugin from '@rolldown/plugin-babel'
 import annotateModulePure from 'babel-plugin-annotate-module-pure'
-import clsx from 'clsx'
+import { clsx } from 'cnfast'
 import { difference } from 'es-toolkit'
 import { target } from '../utils.js'
 
@@ -14,6 +14,7 @@ const modulePureFunctions = {
   classnames: ['default'],
   clsx: ['default', 'clsx'],
   'clsx/lite': ['default', 'clsx'],
+  cnfast: ['default', 'clsx', 'createCn'],
   'es-toolkit': ['clamp', 'mapValues', 'noop'],
   'lodash-es': [
     'clamp',
@@ -81,7 +82,37 @@ const modulePureFunctions = {
 export function babel() {
   return babelPlugin({
     targets: target,
+    // Replaces `loose: true` in preset-env (removed in Babel 8).
+    // See: https://babeljs.io/docs/assumptions#migrating-from-babelpreset-envs-loose-and-spec-modes
+    assumptions: {
+      arrayLikeIsIterable: true,
+      constantReexports: true,
+      ignoreFunctionLength: true,
+      ignoreToPrimitiveHint: true,
+      mutableTemplateObject: true,
+      noClassCalls: true,
+      noDocumentAll: true,
+      objectRestNoSymbols: true,
+      privateFieldsAsProperties: true,
+      pureGetters: true,
+      setClassMethods: true,
+      setComputedProperties: true,
+      setPublicClassFields: true,
+      setSpreadProperties: true,
+      skipForOfIteratorClosing: true,
+      superIsCallableConstructor: true,
+    },
     plugins: [
+      // Replaces `useBuiltIns: 'usage'` + `corejs` in preset-env (removed in Babel 8).
+      // See: https://babeljs.io/docs/v8-migration#usebuiltins-corejs
+      [
+        'babel-plugin-polyfill-corejs3',
+        {
+          method: 'usage-global',
+          version: corejsPackage.version,
+          proposals: false,
+        },
+      ],
       [
         annotateModulePure,
         /** @satisfies {import("babel-plugin-annotate-module-pure").Options} */ ({
@@ -89,7 +120,7 @@ export function babel() {
         }),
       ],
       // Precompute pure `clsx` calls
-      {
+      () => ({
         visitor: {
           CallExpression(path, state) {
             const clleePath = path.get('callee')
@@ -112,24 +143,17 @@ export function babel() {
             path.replaceWith(stringLiteral(clsx(classNames)))
           },
         },
-      },
+      }),
     ],
     presets: [
       [
         presetEnv,
         /** @satisfies {import("@babel/preset-env").Options} */ ({
-          targets: target,
-          useBuiltIns: 'usage',
-          corejs: {
-            version: corejsPackage.version,
-            proposals: false,
-          },
-          shippedProposals: true,
           ignoreBrowserslistConfig: true,
-          bugfixes: true,
-          loose: true,
           modules: false,
           debug: false,
+          // Required by `loose: true` migration — excludes typeof-symbol transform.
+          exclude: ['transform-typeof-symbol'],
         }),
       ],
     ],

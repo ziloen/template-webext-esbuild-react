@@ -1,24 +1,19 @@
 import type { RefCallback } from 'react'
 import { createContext, use, useCallback, useState } from 'react'
 import { createPortal } from 'react-dom'
-import Browser from 'webextension-polyfill'
 
 type Props = {
   children?: React.ReactNode
-  /**
-   * @default 'closed'
-   */
-  mode?: 'open' | 'closed'
 }
 
-const commonCSSURL = Browser.runtime.getURL('styles.css')
+const commonCSSURL = browser.runtime.getURL('styles.css')
 
-export function ReactShadow({ children, mode = 'closed' }: Props) {
+export function ReactShadow({ children }: Props) {
   const [shadowRoot, setShadowRoot] = useState<ShadowRoot | null>(null)
   const [styleLoading, setStyleLoading] = useState(true)
 
   const init = useCallback<RefCallback<HTMLDivElement>>((el) => {
-    setShadowRoot(el ? el.attachShadow({ mode }) : null)
+    setShadowRoot(el ? el.attachShadow({ mode: 'closed' }) : null)
   }, [])
 
   return (

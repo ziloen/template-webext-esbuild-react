@@ -1,5 +1,4 @@
 import { sendMessage } from 'typed-webext'
-import Browser from 'webextension-polyfill'
 
 export default function App() {
   return (
@@ -8,7 +7,7 @@ export default function App() {
 
       <button
         onClick={() => {
-          Browser.runtime.openOptionsPage()
+          browser.runtime.openOptionsPage()
         }}
       >
         Open Options Page

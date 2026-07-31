@@ -1,16 +1,14 @@
-import Browser from 'webextension-polyfill'
-
 function removePopup() {
-  return Browser.action.setPopup({ popup: '' })
+  return browser.action.setPopup({ popup: '' })
 }
 
 function setPopup() {
-  return Browser.action.setPopup({ popup: './pages/popup/index.html' })
+  return browser.action.setPopup({ popup: './pages/popup/index.html' })
 }
 
 export function grantAllUrlPermission() {
-  Browser.runtime.onInstalled.addListener(() => {
-    Browser.permissions.contains({ origins: ['<all_urls>'] }).then((val) => {
+  browser.runtime.onInstalled.addListener(() => {
+    browser.permissions.contains({ origins: ['<all_urls>'] }).then((val) => {
       if (!val) {
         removePopup()
       }
@@ -18,13 +16,13 @@ export function grantAllUrlPermission() {
   })
 
   let permissionRequesting: Promise<any> | null = null
-  Browser.action.onClicked.addListener((tab, info) => {
+  browser.action.onClicked.addListener((tab, info) => {
     if (permissionRequesting) return
-    permissionRequesting = Browser.permissions
+    permissionRequesting = browser.permissions
       .request({ origins: ['<all_urls>'] })
       .then((result) => {
         if (result) {
-          Browser.action.getPopup({}).then((url) => {
+          browser.action.getPopup({}).then((url) => {
             if (url) return
             setPopup()
           })
@@ -37,10 +35,10 @@ export function grantAllUrlPermission() {
         permissionRequesting = null
       })
 
-    Browser.action.openPopup()
+    browser.action.openPopup()
   })
 
-  Browser.permissions.onRemoved.addListener((permissions) => {
+  browser.permissions.onRemoved.addListener((permissions) => {
     if (permissions.origins?.includes('<all_urls>')) {
       removePopup()
     }

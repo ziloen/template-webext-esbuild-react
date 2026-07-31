@@ -73,9 +73,9 @@ export async function getDirSize(dir) {
 
         if (entry.isDirectory()) {
           return getDirSize(entryPath)
-        } else {
-          return (await fs.stat(entryPath)).size
         }
+
+        return (await fs.stat(entryPath)).size
       }),
     )
   ).reduce((total, size) => total + size)

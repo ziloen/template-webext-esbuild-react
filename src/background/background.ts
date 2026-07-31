@@ -1,5 +1,4 @@
 import { onMessage, sendMessage } from 'typed-webext'
-import Browser from 'webextension-polyfill'
 import { getActiveTab } from '~/utils'
 import { grantAllUrlPermission } from './grant-all-url-permission'
 
@@ -7,7 +6,7 @@ if (IS_FIREFOX_ENV) {
   grantAllUrlPermission()
 }
 
-Browser.runtime.onConnect.addListener(() => {
+browser.runtime.onConnect.addListener(() => {
   console.log('Hello from the background script!')
 })
 
@@ -16,11 +15,11 @@ onMessage.example(({ data, sender }) => {
 })
 
 onMessage.open_sidebar(async ({ data = {}, sender }) => {
-  if (Browser.sidebarAction) {
-    return Browser.sidebarAction.open()
+  if (browser.sidebarAction) {
+    return browser.sidebarAction.open()
   }
 
-  if (!Browser.sidePanel) {
+  if (!browser.sidePanel) {
     throw new Error('Sidebar is not available')
   }
 
@@ -33,17 +32,17 @@ onMessage.open_sidebar(async ({ data = {}, sender }) => {
     }
   }
 
-  return Browser.sidePanel.open({
+  return browser.sidePanel.open({
     windowId,
   })
 })
 
 onMessage.toggle_sidebar(async ({ data = {}, sender }) => {
-  if (Browser.sidebarAction) {
-    return Browser.sidebarAction.toggle()
+  if (browser.sidebarAction) {
+    return browser.sidebarAction.toggle()
   }
 
-  if (!Browser.sidePanel) {
+  if (!browser.sidePanel) {
     throw new Error('Sidebar is not available')
   }
 
@@ -56,6 +55,6 @@ onMessage.toggle_sidebar(async ({ data = {}, sender }) => {
     }
   }
 
-  const openPromise = Browser.sidePanel.open({ windowId })
+  const openPromise = browser.sidePanel.open({ windowId })
   return sendMessage.to_sidepanel_close_sidepanel().catch(() => openPromise)
 })

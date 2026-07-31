@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { styleText } from 'node:util'
-import { formatBytes } from '../utils'
+import { formatBytes } from '../utils.js'
 
 /**
  * @returns {import('vite').Plugin}
