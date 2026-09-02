@@ -4,7 +4,7 @@ import presetEnv from '@babel/preset-env'
 import { stringLiteral } from '@babel/types'
 import babelPlugin from '@rolldown/plugin-babel'
 import annotateModulePure from 'babel-plugin-annotate-module-pure'
-import { clsx } from 'cnfast'
+import { clsx } from 'cn/lite'
 import { difference } from 'es-toolkit'
 import { target } from '../utils.js'
 
@@ -14,7 +14,8 @@ const modulePureFunctions = {
   classnames: ['default'],
   clsx: ['default', 'clsx'],
   'clsx/lite': ['default', 'clsx'],
-  cnfast: ['default', 'clsx', 'createCn'],
+  cn: ['clsx'],
+  'cn/lite': ['clsx'],
   'es-toolkit': ['clamp', 'mapValues', 'noop'],
   'lodash-es': [
     'clamp',
