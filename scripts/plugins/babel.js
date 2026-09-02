@@ -1,4 +1,4 @@
-import corejsPackage from 'core-js/package.json' with { type: 'json' }
+import corejsPkg from 'core-js/package.json' with { type: 'json' }
 
 import presetEnv from '@babel/preset-env'
 import { stringLiteral } from '@babel/types'
@@ -104,22 +104,6 @@ export function babel() {
       superIsCallableConstructor: true,
     },
     plugins: [
-      // Replaces `useBuiltIns: 'usage'` + `corejs` in preset-env (removed in Babel 8).
-      // See: https://babeljs.io/docs/v8-migration#usebuiltins-corejs
-      [
-        'babel-plugin-polyfill-corejs3',
-        {
-          method: 'usage-global',
-          version: corejsPackage.version,
-          proposals: false,
-        },
-      ],
-      [
-        annotateModulePure,
-        /** @satisfies {import("babel-plugin-annotate-module-pure").Options} */ ({
-          pureFunctions: modulePureFunctions,
-        }),
-      ],
       // Precompute pure `clsx` calls
       () => ({
         visitor: {
@@ -141,10 +125,24 @@ export function babel() {
               classNames.push(arg.node.value)
             }
 
-            path.replaceWith(stringLiteral(clsx(classNames)))
+            path.replaceWith(stringLiteral(clsx(...classNames)))
           },
         },
       }),
+      [
+        annotateModulePure,
+        /** @satisfies {import("babel-plugin-annotate-module-pure").Options} */ ({
+          pureFunctions: modulePureFunctions,
+        }),
+      ],
+      [
+        'babel-plugin-polyfill-corejs3',
+        {
+          method: 'usage-global',
+          version: corejsPkg.version,
+          proposals: false,
+        },
+      ],
     ],
     presets: [
       [
